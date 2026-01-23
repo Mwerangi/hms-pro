@@ -118,4 +118,11 @@ Route::middleware(['auth'])->group(function () {
     
     // API Routes for IPD
     Route::get('/api/wards/{ward}/available-beds', [WardController::class, 'getAvailableBeds'])->name('api.wards.available-beds');
+    
+    // Billing Routes
+    Route::resource('services', ServiceController::class);
+    Route::post('/services/{service}/toggle-status', [ServiceController::class, 'toggleStatus'])->name('services.toggle-status');
+    Route::resource('bills', BillController::class);
+    Route::post('/bills/{bill}/add-payment', [BillController::class, 'addPayment'])->name('bills.add-payment');
+    Route::get('/bills/{bill}/receipt', [BillController::class, 'receipt'])->name('bills.receipt');
 });
