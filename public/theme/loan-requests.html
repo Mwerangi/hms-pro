@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Loan Requests - Microfinance Management System</title>
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Main CSS Files -->
+  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="assets/css/dashboard.css" rel="stylesheet">
+</head>
+
+<body class="dashboard-page">
+
+  <!-- Header -->
+  <header id="header" class="header d-flex align-items-center fixed-top dashboard-header">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <a href="dashboard.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">MicroFinance Pro</h1>
+      </a>
+      <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
+          <li class="nav-item dropdown">
+            <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-bell"></i>
+              <span class="badge bg-danger badge-number">4</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown pe-3">
+            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+              <span class="d-none d-md-block dropdown-toggle ps-2">Admin User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+              <li class="dropdown-header">
+                <h6>Admin User</h6>
+                <span>Administrator</span>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item d-flex align-items-center" href="login.html">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Sign Out</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="dashboard.html">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-target="#loans-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-cash-stack"></i><span>Loan Management</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="loans-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="loan-requests.html" class="active">
+              <i class="bi bi-circle"></i><span>Loan Requests</span>
+            </a>
+          </li>
+          <li>
+            <a href="loan-approval.html">
+              <i class="bi bi-circle"></i><span>Approval Workflow</span>
+            </a>
+          </li>
+          <li>
+            <a href="loan-disbursement.html">
+              <i class="bi bi-circle"></i><span>Disbursement</span>
+            </a>
+          </li>
+          <li>
+            <a href="active-loans.html">
+              <i class="bi bi-circle"></i><span>Active Loans</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="payments.html">
+          <i class="bi bi-wallet2"></i>
+          <span>Payments & Collections</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="customers.html">
+          <i class="bi bi-people"></i>
+          <span>Customers/Borrowers</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Loan Requests</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="dashboard.html">Home</a></li>
+          <li class="breadcrumb-item">Loan Management</li>
+          <li class="breadcrumb-item active">Loan Requests</li>
+        </ol>
+      </nav>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+
+          <!-- Stats Cards -->
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <div class="card info-card">
+                <div class="card-body">
+                  <h5 class="card-title">Total Requests</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                      <h6 class="mb-0">127</h6>
+                      <span class="text-muted small">All time</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card info-card">
+                <div class="card-body">
+                  <h5 class="card-title">Pending Review</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                      <h6 class="mb-0 text-warning">23</h6>
+                      <span class="text-muted small">Awaiting action</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card info-card">
+                <div class="card-body">
+                  <h5 class="card-title">Under Review</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                      <h6 class="mb-0 text-info">15</h6>
+                      <span class="text-muted small">In process</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card info-card">
+                <div class="card-body">
+                  <h5 class="card-title">This Month</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                      <h6 class="mb-0 text-primary">42</h6>
+                      <span class="text-muted small">New applications</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter and Actions -->
+          <div class="card">
+            <div class="card-body">
+              <div class="row align-items-center py-3">
+                <div class="col-md-3">
+                  <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#newLoanModal">
+                    <i class="bi bi-plus-circle me-2"></i>New Loan Request
+                  </button>
+                </div>
+                <div class="col-md-9">
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" placeholder="Search by name, ID..." id="searchInput">
+                    </div>
+                    <div class="col-md-3">
+                      <select class="form-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending Review</option>
+                        <option value="review">Under Review</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <select class="form-select" id="amountFilter">
+                        <option value="">All Amounts</option>
+                        <option value="0-5000">$0 - $5,000</option>
+                        <option value="5000-10000">$5,000 - $10,000</option>
+                        <option value="10000-20000">$10,000 - $20,000</option>
+                        <option value="20000+">$20,000+</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <button class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-funnel"></i> Filter
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loan Requests Table -->
+          <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">All Loan Requests</h5>
+
+              <div class="table-responsive">
+                <table class="table table-hover datatable">
+                  <thead>
+                    <tr>
+                      <th scope="col">
+                        <input type="checkbox" class="form-check-input" id="selectAll">
+                      </th>
+                      <th scope="col">Request ID</th>
+                      <th scope="col">Customer Name</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Purpose</th>
+                      <th scope="col">Term</th>
+                      <th scope="col">Interest Rate</th>
+                      <th scope="col">Date Applied</th>
+                      <th scope="col">Credit Score</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><input type="checkbox" class="form-check-input"></td>
+                      <th scope="row"><a href="#" class="text-primary">#LN-2457</a></th>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="customer-avatar me-2">BJ</div>
+                          <div>
+                            <div class="fw-bold">Brandon Jacob</div>
+                            <small class="text-muted">brandon@email.com</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="fw-bold">$15,000</td>
+                      <td>Business Expansion</td>
+                      <td>24 months</td>
+                      <td>8.5%</td>
+                      <td>2025-12-04</td>
+                      <td><span class="badge bg-success">720</span></td>
+                      <td><span class="badge bg-warning">Pending Review</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLoanModal" title="View Details">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-success" title="Approve">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-danger" title="Reject">
+                            <i class="bi bi-x-circle"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" class="form-check-input"></td>
+                      <th scope="row"><a href="#" class="text-primary">#LN-2456</a></th>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="customer-avatar me-2">BK</div>
+                          <div>
+                            <div class="fw-bold">Bridie Kessler</div>
+                            <small class="text-muted">bridie@email.com</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="fw-bold">$5,000</td>
+                      <td>Personal</td>
+                      <td>12 months</td>
+                      <td>12%</td>
+                      <td>2025-12-03</td>
+                      <td><span class="badge bg-success">680</span></td>
+                      <td><span class="badge bg-success">Approved</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLoanModal" title="View Details">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button class="btn btn-sm btn-info" title="Process Disbursement">
+                            <i class="bi bi-cash-coin"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" class="form-check-input"></td>
+                      <th scope="row"><a href="#" class="text-primary">#LN-2455</a></th>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="customer-avatar me-2">AL</div>
+                          <div>
+                            <div class="fw-bold">Ashleigh Langosh</div>
+                            <small class="text-muted">ashleigh@email.com</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="fw-bold">$8,500</td>
+                      <td>Education</td>
+                      <td>36 months</td>
+                      <td>7%</td>
+                      <td>2025-12-02</td>
+                      <td><span class="badge bg-success">750</span></td>
+                      <td><span class="badge bg-info">Under Review</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLoanModal" title="View Details">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-success" title="Approve">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-danger" title="Reject">
+                            <i class="bi bi-x-circle"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" class="form-check-input"></td>
+                      <th scope="row"><a href="#" class="text-primary">#LN-2454</a></th>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="customer-avatar me-2">AG</div>
+                          <div>
+                            <div class="fw-bold">Angus Grady</div>
+                            <small class="text-muted">angus@email.com</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="fw-bold">$12,000</td>
+                      <td>Home Improvement</td>
+                      <td>24 months</td>
+                      <td>9%</td>
+                      <td>2025-12-01</td>
+                      <td><span class="badge bg-warning">620</span></td>
+                      <td><span class="badge bg-warning">Pending Review</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLoanModal" title="View Details">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-success" title="Approve">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-danger" title="Reject">
+                            <i class="bi bi-x-circle"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" class="form-check-input"></td>
+                      <th scope="row"><a href="#" class="text-primary">#LN-2453</a></th>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="customer-avatar me-2">RL</div>
+                          <div>
+                            <div class="fw-bold">Raheem Lehner</div>
+                            <small class="text-muted">raheem@email.com</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="fw-bold">$20,000</td>
+                      <td>Business Start-up</td>
+                      <td>48 months</td>
+                      <td>10%</td>
+                      <td>2025-11-30</td>
+                      <td><span class="badge bg-danger">580</span></td>
+                      <td><span class="badge bg-danger">Rejected</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLoanModal" title="View Details">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button class="btn btn-sm btn-secondary" disabled title="Closed">
+                            <i class="bi bi-lock"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" class="form-check-input"></td>
+                      <th scope="row"><a href="#" class="text-primary">#LN-2452</a></th>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="customer-avatar me-2">SM</div>
+                          <div>
+                            <div class="fw-bold">Sarah Martinez</div>
+                            <small class="text-muted">sarah@email.com</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="fw-bold">$7,500</td>
+                      <td>Medical Emergency</td>
+                      <td>18 months</td>
+                      <td>11%</td>
+                      <td>2025-11-29</td>
+                      <td><span class="badge bg-warning">640</span></td>
+                      <td><span class="badge bg-info">Under Review</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLoanModal" title="View Details">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-success" title="Approve">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-danger" title="Reject">
+                            <i class="bi bi-x-circle"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination -->
+              <nav aria-label="Page navigation" class="mt-3">
+                <ul class="pagination justify-content-center">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                  </li>
+                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                  </li>
+                </ul>
+              </nav>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- New Loan Request Modal -->
+  <div class="modal fade" id="newLoanModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Loan Request</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="customerSelect" class="form-label">Customer</label>
+                <select class="form-select" id="customerSelect" required>
+                  <option value="">Select Customer</option>
+                  <option value="1">John Doe</option>
+                  <option value="2">Jane Smith</option>
+                  <option value="3">Mike Johnson</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="loanAmount" class="form-label">Loan Amount ($)</label>
+                <input type="number" class="form-control" id="loanAmount" placeholder="10000" required>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="loanPurpose" class="form-label">Loan Purpose</label>
+                <select class="form-select" id="loanPurpose" required>
+                  <option value="">Select Purpose</option>
+                  <option value="business">Business Expansion</option>
+                  <option value="personal">Personal</option>
+                  <option value="education">Education</option>
+                  <option value="home">Home Improvement</option>
+                  <option value="medical">Medical</option>
+                  <option value="agriculture">Agriculture</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="loanTerm" class="form-label">Loan Term (months)</label>
+                <select class="form-select" id="loanTerm" required>
+                  <option value="">Select Term</option>
+                  <option value="6">6 months</option>
+                  <option value="12">12 months</option>
+                  <option value="18">18 months</option>
+                  <option value="24">24 months</option>
+                  <option value="36">36 months</option>
+                  <option value="48">48 months</option>
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="interestRate" class="form-label">Interest Rate (%)</label>
+                <input type="number" class="form-control" id="interestRate" step="0.1" placeholder="8.5" required>
+              </div>
+              <div class="col-md-6">
+                <label for="repaymentFrequency" class="form-label">Repayment Frequency</label>
+                <select class="form-select" id="repaymentFrequency" required>
+                  <option value="">Select Frequency</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="biweekly">Bi-weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="quarterly">Quarterly</option>
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label for="collateral" class="form-label">Collateral (if any)</label>
+                <textarea class="form-control" id="collateral" rows="2" placeholder="Describe collateral..."></textarea>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label for="loanNotes" class="form-label">Additional Notes</label>
+                <textarea class="form-control" id="loanNotes" rows="3" placeholder="Additional information..."></textarea>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label for="documents" class="form-label">Upload Documents</label>
+                <input type="file" class="form-control" id="documents" multiple>
+                <small class="text-muted">Upload ID, income proof, collateral documents, etc.</small>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary">Submit Request</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Loan Details Modal -->
+  <div class="modal fade" id="viewLoanModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Loan Request Details - #LN-2457</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="fw-bold mb-3">Customer Information</h6>
+              <table class="table table-sm">
+                <tr>
+                  <td class="fw-bold">Name:</td>
+                  <td>Brandon Jacob</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Email:</td>
+                  <td>brandon@email.com</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Phone:</td>
+                  <td>+1 234 567 8900</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Credit Score:</td>
+                  <td><span class="badge bg-success">720</span></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Existing Loans:</td>
+                  <td>1 active loan</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Payment History:</td>
+                  <td><span class="text-success">Excellent (100%)</span></td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <h6 class="fw-bold mb-3">Loan Details</h6>
+              <table class="table table-sm">
+                <tr>
+                  <td class="fw-bold">Loan Amount:</td>
+                  <td class="text-primary fw-bold">$15,000</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Purpose:</td>
+                  <td>Business Expansion</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Term:</td>
+                  <td>24 months</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Interest Rate:</td>
+                  <td>8.5% per annum</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Monthly Payment:</td>
+                  <td class="fw-bold">$678.32</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Total Repayment:</td>
+                  <td class="fw-bold">$16,279.68</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Application Date:</td>
+                  <td>December 4, 2025</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Status:</td>
+                  <td><span class="badge bg-warning">Pending Review</span></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <h6 class="fw-bold mb-3">Collateral Information</h6>
+              <p>Business equipment valued at $20,000</p>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <h6 class="fw-bold mb-3">Documents</h6>
+              <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                  <i class="bi bi-file-pdf text-danger me-2"></i>National ID Card
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <i class="bi bi-file-pdf text-danger me-2"></i>Income Statement
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <i class="bi bi-file-pdf text-danger me-2"></i>Business Registration
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <i class="bi bi-file-pdf text-danger me-2"></i>Bank Statements (6 months)
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <h6 class="fw-bold mb-3">Review Notes</h6>
+              <textarea class="form-control" rows="3" placeholder="Add review notes..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger">Reject</button>
+          <button type="button" class="btn btn-warning">Request More Info</button>
+          <button type="button" class="btn btn-success">Approve</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="copyright">
+          &copy; 2025 <strong>MicroFinance Pro</strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+          Version 1.0.0
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>@yield('title', 'Dashboard') - HMS Pro</title>
+  <meta name="description" content="Hospital Management System">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
+  <!-- Favicons -->
+  <link href="{{ asset('theme/assets/img/favicon.png') }}" rel="icon">
+  <link href="{{ asset('theme/assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Ubuntu:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{{ asset('theme/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('theme/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{{ asset('theme/assets/css/main.css') }}" rel="stylesheet">
+  <link href="{{ asset('theme/assets/css/dashboard.css') }}" rel="stylesheet">
+
+  @stack('styles')
+
+  <style>
+    /* Custom HMS Styles */
+    :root {
+      --hms-primary: #00a19e;
+      --hms-primary-dark: #008582;
+      --hms-secondary: #193838;
+      --hms-purple: #667eea;
+      --hms-purple-dark: #764ba2;
+      --hms-success: #48bb78;
+      --hms-warning: #ffc107;
+      --hms-danger: #dc3545;
+      --hms-info: #17a2b8;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f7f8fc;
+      --text-primary: #2d3748;
+      --text-secondary: #718096;
+      --border-color: #e2e8f0;
+    }
+
+    /* Dark Mode Variables */
+    [data-theme="dark"] {
+      --bg-primary: #1a202c;
+      --bg-secondary: #2d3748;
+      --text-primary: #f7fafc;
+      --text-secondary: #cbd5e0;
+      --border-color: #4a5568;
+    }
+
+    body {
+      background: var(--bg-secondary);
+      font-family: 'Roboto', sans-serif;
+      color: var(--text-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb-section {
+      padding: 16px 20px 0;
+      margin-top: 60px;
+      margin-left: 260px;
+      transition: margin-left 0.3s ease;
+      background: transparent;
+    }
+
+    .sidebar-collapsed .breadcrumb-section {
+      margin-left: 80px;
+    }
+
+    .breadcrumb {
+      margin: 0;
+      padding: 10px 16px;
+      background: white;
+      font-size: 13px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e5e7eb;
+    }
+
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+    }
+
+    .breadcrumb-item a {
+      color: #6b7280;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+    }
+
+    .breadcrumb-item a:hover {
+      color: #667eea;
+    }
+
+    .breadcrumb-item a i {
+      font-size: 14px;
+    }
+
+    .breadcrumb-item.active {
+      color: #111827;
+      font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+      content: '/';
+      color: #d1d5db;
+      padding: 0 8px;
+      font-weight: 400;
+    }
+
+    /* Dark Mode Toggle */
+    .dark-mode-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: transparent;
+      border: none;
+      color: #4a5568;
+    }
+
+    .dark-mode-toggle:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--hms-purple);
+      transform: rotate(15deg);
+    }
+
+    /* Top Header */
+    .hms-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .hms-header {
+      background: rgba(26, 32, 44, 0.95);
+    }
+
+    .sidebar-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: transparent;
+      border: none;
+      color: #4a5568;
+      margin-right: 15px;
+    }
+
+    .sidebar-toggle:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--hms-purple);
+    }
+
+    .hms-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--hms-secondary);
+      text-decoration: none;
+      margin-right: 30px;
+    }
+
+    .hms-logo i {
+      font-size: 28px;
+      color: var(--hms-primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-left: auto;
+    }
+
+    .header-icon {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4a5568;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: transparent;
+      border: none;
+    }
+
+    .header-icon:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--hms-purple);
+    }
+
+    .header-icon .badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: var(--hms-danger);
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 5px;
+      border-radius: 10px;
+      border: 2px solid white;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .user-profile:hover {
+      background: rgba(102, 126, 234, 0.1);
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--hms-purple), var(--hms-primary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .user-role {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: capitalize;
+    }
+
+    /* Sidebar */
+    .hms-sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      bottom: 0;
+      width: 240px;
+      background: var(--bg-primary);
+      border-right: 1px solid var(--border-color);
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    [data-theme="dark"] .hms-sidebar {
+      background: var(--bg-primary);
+    }
+
+    .hms-sidebar.collapsed {
+      width: 70px;
+    }
+
+    .sidebar-nav {
+      padding: 20px 0;
+    }
+
+    .nav-section-title {
+      padding: 10px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #a0aec0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .hms-sidebar.collapsed .nav-section-title {
+      opacity: 0;
+      height: 0;
+      padding: 0;
+      margin: 0;
+    }
+
+    .nav-item {
+      margin: 2px 10px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      position: relative;
+    }
+
+    .nav-link i {
+      font-size: 20px;
+      min-width: 20px;
+    }
+
+    .nav-link:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--hms-purple);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, var(--hms-primary), var(--hms-purple));
+      color: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .hms-sidebar.collapsed .nav-link span {
+      display: none;
+    }
+
+    /* Main Content */
+    .hms-main {
+      margin-left: 240px;
+      margin-top: 60px;
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+      min-height: calc(100vh - 60px);
+    }
+
+    .hms-main.expanded {
+      margin-left: 70px;
+    }
+
+    /* Logout Form */
+    .logout-form {
+      display: inline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Header -->
+  <header class="hms-header">
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+      <i class="bi bi-list" style="font-size: 24px;"></i>
+    </button>
+
+    <a href="{{ route('dashboard') }}" class="hms-logo">
+      <i class="bi bi-hospital"></i>
+      <span>HMS Pro</span>
+    </a>
+
+    <div class="header-actions">
+      <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+        <i class="bi bi-moon-stars-fill" id="darkModeIcon" style="font-size: 20px;"></i>
+      </button>
+      
+      <button class="header-icon">
+        <i class="bi bi-bell" style="font-size: 20px;"></i>
+        <span class="badge">3</span>
+      </button>
+
+      <div class="user-profile" onclick="toggleProfileMenu()">
+        <div class="user-avatar">
+          {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+        </div>
+        <div class="user-info">
+          <span class="user-name">{{ auth()->user()->name ?? 'User' }}</span>
+          <span class="user-role">
+            @php
+              $userRole = auth()->user()->roles->first();
+              $roleName = $userRole ? $userRole->name : 'user';
+            @endphp
+            {{ ucwords(str_replace('-', ' ', $roleName)) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-section">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-3">
+        <li class="breadcrumb-item">
+          <a href="{{ route('dashboard') }}">
+            <i class="bi bi-house-door me-1"></i>Home
+          </a>
+        </li>
+        @yield('breadcrumbs')
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="hms-sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Main</div>
+      <ul class="list-unstyled">
+        <li class="nav-item">
+          <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-section-title">Patient Management</div>
+      <ul class="list-unstyled">
+        <li class="nav-item">
+          <a href="{{ route('patients.index') }}" class="nav-link {{ request()->routeIs('patients.*') ? 'active' : '' }}">
+            <i class="bi bi-people"></i>
+            <span>Patients</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('appointments.index') }}" class="nav-link {{ request()->routeIs('appointments.*') ? 'active' : '' }}">
+            <i class="bi bi-calendar-check"></i>
+            <span>Appointments</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-section-title">Clinical</div>
+      <ul class="list-unstyled">
+        <li class="nav-item">
+          <a href="{{ route('nursing.dashboard') }}" class="nav-link {{ request()->routeIs('nursing.*') ? 'active' : '' }}">
+            <i class="bi bi-heart-pulse"></i>
+            <span>Nursing Station</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('consultations.index') }}" class="nav-link {{ request()->routeIs('consultations.*') ? 'active' : '' }}">
+            <i class="bi bi-file-medical"></i>
+            <span>Consultations</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('ipd.dashboard') }}" class="nav-link {{ request()->routeIs('ipd.*') || request()->routeIs('wards.*') || request()->routeIs('beds.*') || request()->routeIs('admissions.*') ? 'active' : '' }}">
+            <i class="bi bi-hospital"></i>
+            <span>IPD / Beds</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('lab.dashboard') }}" class="nav-link {{ request()->routeIs('lab.*') && !request()->routeIs('radiology.*') ? 'active' : '' }}">
+            <i class="bi bi-clipboard-pulse"></i>
+            <span>Laboratory</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('radiology.dashboard') }}" class="nav-link {{ request()->routeIs('radiology.*') ? 'active' : '' }}">
+            <i class="bi bi-camera"></i>
+            <span>Radiology</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('pharmacy.dashboard') }}" class="nav-link {{ request()->routeIs('pharmacy.*') ? 'active' : '' }}">
+            <i class="bi bi-capsule"></i>
+            <span>Pharmacy</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-section-title">System</div>
+      <ul class="list-unstyled">
+        <li class="nav-item">
+          <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+            <i class="bi bi-people"></i>
+            <span>User Management</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-gear"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <form action="{{ route('logout') }}" method="POST" class="logout-form">
+            @csrf
+            <a href="#" class="nav-link" onclick="event.preventDefault(); this.closest('form').submit();">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Logout</span>
+            </a>
+          </form>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="hms-main" id="mainContent">
+    @yield('content')
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" style="position: fixed; top: 80px; right: 20px; z-index: 9999; min-width: 320px;"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="{{ asset('theme/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+  <script>
+    // Toast Notification System
+    function showToast(message, type = 'success', duration = 4000) {
+      const container = document.getElementById('toastContainer');
+      const toastId = 'toast-' + Date.now();
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      
+      const icons = {
+        success: 'bi-check-circle-fill',
+        error: 'bi-x-circle-fill',
+        warning: 'bi-exclamation-triangle-fill',
+        info: 'bi-info-circle-fill'
+      };
+      
+      const colors = {
+        success: '#48bb78',
+        error: '#f56565',
+        warning: '#ed8936',
+        info: '#4299e1'
+      };
+      
+      const toast = document.createElement('div');
+      toast.id = toastId;
+      toast.style.cssText = `
+        background: ${isDark ? '#2d3748' : 'white'};
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, ${isDark ? '0.4' : '0.15'});
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 4px solid ${colors[type]};
+        position: relative;
+        overflow: hidden;
+      `;
+      
+      toast.innerHTML = `
+        <div style="
+          width: 40px;
+          height: 40px;
+          background: ${colors[type]}15;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+          color: ${colors[type]};
+          flex-shrink: 0;
+        ">
+          <i class="bi ${icons[type]}"></i>
+        </div>
+        <div style="flex: 1; color: ${isDark ? '#f7fafc' : '#2d3748'}; font-size: 14px; font-weight: 500;">
+          ${message}
+        </div>
+        <button onclick="removeToast('${toastId}')" 
+                style="
+                  background: transparent;
+                  border: none;
+                  color: ${isDark ? '#cbd5e0' : '#718096'};
+                  cursor: pointer;
+                  font-size: 18px;
+                  padding: 4px 8px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  transition: color 0.2s ease;
+                "
+                onmouseover="this.style.color='${isDark ? '#f7fafc' : '#2d3748'}'"
+                onmouseout="this.style.color='${isDark ? '#cbd5e0' : '#718096'}'">
+          <i class="bi bi-x"></i>
+        </button>
+        <div style="
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          height: 3px;
+          background: ${colors[type]};
+          width: 100%;
+          animation: shrink ${duration}ms linear;
+        "></div>
+      `;
+      
+      container.appendChild(toast);
+      
+      // Auto remove
+      setTimeout(() => {
+        removeToast(toastId);
+      }, duration);
+    }
+    
+    function removeToast(toastId) {
+      const toast = document.getElementById(toastId);
+      if (toast) {
+        toast.style.animation = 'slideOutRight 0.3s cubic-bezier(0.4, 0, 1, 1)';
+        setTimeout(() => toast.remove(), 300);
+      }
+    }
+    
+    // Add animations to document
+    if (!document.querySelector('#toastAnimations')) {
+      const style = document.createElement('style');
+      style.id = 'toastAnimations';
+      style.textContent = `
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(100%);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        @keyframes slideOutRight {
+          from {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateX(100%);
+          }
+        }
+        
+        @keyframes shrink {
+          from {
+            width: 100%;
+          }
+          to {
+            width: 0%;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    
+    // Show Laravel flash messages as toasts
+    document.addEventListener('DOMContentLoaded', function() {
+      @if(session('success'))
+        showToast("{{ session('success') }}", 'success');
+      @endif
+      
+      @if(session('error'))
+        showToast("{{ session('error') }}", 'error');
+      @endif
+      
+      @if(session('warning'))
+        showToast("{{ session('warning') }}", 'warning');
+      @endif
+      
+      @if(session('info'))
+        showToast("{{ session('info') }}", 'info');
+      @endif
+      
+      @if($errors->any())
+        @foreach($errors->all() as $error)
+          showToast("{{ addslashes($error) }}", 'error', 6000);
+        @endforeach
+      @endif
+    });
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      
+      sidebar.classList.toggle('collapsed');
+      mainContent.classList.toggle('expanded');
+      
+      // Save state to localStorage
+      const isCollapsed = sidebar.classList.contains('collapsed');
+      localStorage.setItem('sidebarCollapsed', isCollapsed);
+    }
+
+    function toggleProfileMenu() {
+      // TODO: Implement profile dropdown menu
+      console.log('Profile menu clicked');
+    }
+
+    // Dark Mode Toggle
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      const icon = document.getElementById('darkModeIcon');
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      
+      // Update icon
+      if (newTheme === 'dark') {
+        icon.className = 'bi bi-sun-fill';
+      } else {
+        icon.className = 'bi bi-moon-stars-fill';
+      }
+      
+      // Show toast notification
+      if (typeof showToast === 'function') {
+        showToast(`${newTheme === 'dark' ? 'Dark' : 'Light'} mode activated`, 'success');
+      }
+    }
+
+    // Restore sidebar state and theme on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Sidebar state
+      const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+      if (sidebarCollapsed) {
+        document.getElementById('sidebar').classList.add('collapsed');
+        document.getElementById('mainContent').classList.add('expanded');
+      }
+      
+      // Theme state
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      const icon = document.getElementById('darkModeIcon');
+      if (savedTheme === 'dark') {
+        icon.className = 'bi bi-sun-fill';
+      } else {
+        icon.className = 'bi bi-moon-stars-fill';
+      }
+    });
+  </script>
+
+  @stack('scripts')
+
+</body>
+</html>

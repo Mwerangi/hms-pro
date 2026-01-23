@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Loan Approval Workflow - Microfinance Management System</title>
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@0,300;0,400;0,500;0,700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Main CSS Files -->
+  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="assets/css/dashboard.css" rel="stylesheet">
+</head>
+
+<body class="dashboard-page">
+
+  <!-- Header -->
+  <header id="header" class="header d-flex align-items-center fixed-top dashboard-header">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <a href="dashboard.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">MicroFinance Pro</h1>
+      </a>
+      <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
+          <li class="nav-item dropdown pe-3">
+            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+              <span class="d-none d-md-block dropdown-toggle ps-2">Admin User</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="dashboard.html">
+          <i class="bi bi-grid"></i><span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-target="#loans-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-cash-stack"></i><span>Loan Management</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="loans-nav" class="nav-content collapse show">
+          <li><a href="loan-requests.html"><i class="bi bi-circle"></i><span>Loan Requests</span></a></li>
+          <li><a href="loan-approval.html" class="active"><i class="bi bi-circle"></i><span>Approval Workflow</span></a></li>
+          <li><a href="loan-disbursement.html"><i class="bi bi-circle"></i><span>Disbursement</span></a></li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="payments.html">
+          <i class="bi bi-wallet2"></i><span>Payments & Collections</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="customers.html">
+          <i class="bi bi-people"></i><span>Customers/Borrowers</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Loan Approval Workflow</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="dashboard.html">Home</a></li>
+          <li class="breadcrumb-item">Loan Management</li>
+          <li class="breadcrumb-item active">Approval Workflow</li>
+        </ol>
+      </nav>
+    </div>
+
+    <section class="section">
+      
+      <!-- Workflow Stage Stats -->
+      <div class="row mb-4">
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6 class="text-muted">Submitted</h6>
+              <h3 class="text-primary">23</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6 class="text-muted">Document Review</h6>
+              <h3 class="text-info">15</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6 class="text-muted">Credit Check</h6>
+              <h3 class="text-warning">8</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6 class="text-muted">Manager Review</h6>
+              <h3 class="text-secondary">5</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6 class="text-muted">Final Approval</h6>
+              <h3 class="text-success">3</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="card text-center">
+            <div class="card-body">
+              <h6 class="text-muted">Rejected</h6>
+              <h3 class="text-danger">2</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workflow Stages -->
+      <div class="row">
+        
+        <!-- Stage 1: Submitted -->
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h6 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Stage 1: Submitted (23)</h6>
+            </div>
+            <div class="card-body workflow-stage" style="max-height: 400px; overflow-y: auto;">
+              
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2457 - Brandon Jacob</h6>
+                    <p class="mb-1 text-muted small">$15,000 | Business Expansion</p>
+                    <span class="badge bg-light text-dark">Score: 720</span>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">2h ago</small>
+                    <button class="btn btn-sm btn-primary mt-1" onclick="moveToStage(this, 2)">
+                      Review <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2460 - Michael Chen</h6>
+                    <p class="mb-1 text-muted small">$8,000 | Education</p>
+                    <span class="badge bg-light text-dark">Score: 695</span>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">4h ago</small>
+                    <button class="btn btn-sm btn-primary mt-1" onclick="moveToStage(this, 2)">
+                      Review <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2461 - Emily Watson</h6>
+                    <p class="mb-1 text-muted small">$5,500 | Medical</p>
+                    <span class="badge bg-success text-white">Score: 740</span>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">5h ago</small>
+                    <button class="btn btn-sm btn-primary mt-1" onclick="moveToStage(this, 2)">
+                      Review <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 2: Document Review -->
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header bg-info text-white">
+              <h6 class="mb-0"><i class="bi bi-file-earmark-check me-2"></i>Stage 2: Document Review (15)</h6>
+            </div>
+            <div class="card-body workflow-stage" style="max-height: 400px; overflow-y: auto;">
+              
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2455 - Ashleigh Langosh</h6>
+                    <p class="mb-1 text-muted small">$8,500 | Education</p>
+                    <span class="badge bg-success text-white">Score: 750</span>
+                    <div class="mt-2">
+                      <small class="text-success"><i class="bi bi-check-circle"></i> ID Verified</small>
+                      <small class="text-success ms-2"><i class="bi bi-check-circle"></i> Income Verified</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">1d ago</small>
+                    <button class="btn btn-sm btn-success mt-1" onclick="moveToStage(this, 3)">
+                      Approve Docs <i class="bi bi-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger mt-1" onclick="rejectLoan(this)">
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2458 - David Brown</h6>
+                    <p class="mb-1 text-muted small">$12,000 | Home Improvement</p>
+                    <span class="badge bg-warning text-dark">Score: 670</span>
+                    <div class="mt-2">
+                      <small class="text-success"><i class="bi bi-check-circle"></i> ID Verified</small>
+                      <small class="text-warning ms-2"><i class="bi bi-clock"></i> Income Pending</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">1d ago</small>
+                    <button class="btn btn-sm btn-outline-warning mt-1">
+                      Request Docs
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 3: Credit Check -->
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header bg-warning text-dark">
+              <h6 class="mb-0"><i class="bi bi-shield-check me-2"></i>Stage 3: Credit Check (8)</h6>
+            </div>
+            <div class="card-body workflow-stage" style="max-height: 400px; overflow-y: auto;">
+              
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2452 - Sarah Martinez</h6>
+                    <p class="mb-1 text-muted small">$7,500 | Medical Emergency</p>
+                    <span class="badge bg-warning text-dark">Score: 640</span>
+                    <div class="mt-2">
+                      <div class="progress" style="height: 5px;">
+                        <div class="progress-bar bg-warning" style="width: 75%"></div>
+                      </div>
+                      <small class="text-muted">Credit check in progress...</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">2d ago</small>
+                    <button class="btn btn-sm btn-success mt-1" onclick="moveToStage(this, 4)">
+                      Pass Credit <i class="bi bi-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger mt-1" onclick="rejectLoan(this)">
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2459 - Robert Lee</h6>
+                    <p class="mb-1 text-muted small">$18,000 | Business</p>
+                    <span class="badge bg-success text-white">Score: 710</span>
+                    <div class="mt-2">
+                      <small class="text-success"><i class="bi bi-check-circle"></i> Credit check passed</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">2d ago</small>
+                    <button class="btn btn-sm btn-success mt-1" onclick="moveToStage(this, 4)">
+                      Continue <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 4: Manager Review -->
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header bg-secondary text-white">
+              <h6 class="mb-0"><i class="bi bi-person-check me-2"></i>Stage 4: Manager Review (5)</h6>
+            </div>
+            <div class="card-body workflow-stage" style="max-height: 400px; overflow-y: auto;">
+              
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2448 - Jennifer Wilson</h6>
+                    <p class="mb-1 text-muted small">$22,000 | Business Expansion</p>
+                    <span class="badge bg-success text-white">Score: 760</span>
+                    <div class="mt-2">
+                      <small class="text-info"><i class="bi bi-info-circle"></i> Awaiting manager approval</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">3d ago</small>
+                    <button class="btn btn-sm btn-success mt-1" onclick="moveToStage(this, 5)">
+                      Approve <i class="bi bi-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger mt-1" onclick="rejectLoan(this)">
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2449 - Thomas Anderson</h6>
+                    <p class="mb-1 text-muted small">$9,500 | Home Renovation</p>
+                    <span class="badge bg-warning text-dark">Score: 665</span>
+                    <div class="mt-2">
+                      <small class="text-warning"><i class="bi bi-exclamation-triangle"></i> High debt-to-income ratio</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">3d ago</small>
+                    <button class="btn btn-sm btn-success mt-1" onclick="moveToStage(this, 5)">
+                      Approve <i class="bi bi-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger mt-1" onclick="rejectLoan(this)">
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 5: Final Approval -->
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header bg-success text-white">
+              <h6 class="mb-0"><i class="bi bi-check-circle me-2"></i>Stage 5: Final Approval (3)</h6>
+            </div>
+            <div class="card-body workflow-stage" style="max-height: 400px; overflow-y: auto;">
+              
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2456 - Bridie Kessler</h6>
+                    <p class="mb-1 text-muted small">$5,000 | Personal</p>
+                    <span class="badge bg-success text-white">Score: 680</span>
+                    <div class="mt-2">
+                      <small class="text-success"><i class="bi bi-check-circle-fill"></i> Approved - Ready for disbursement</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">4d ago</small>
+                    <a href="loan-disbursement.html" class="btn btn-sm btn-primary mt-1">
+                      Disburse <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2445 - Patricia Moore</h6>
+                    <p class="mb-1 text-muted small">$14,000 | Education</p>
+                    <span class="badge bg-success text-white">Score: 725</span>
+                    <div class="mt-2">
+                      <small class="text-success"><i class="bi bi-check-circle-fill"></i> Approved - Ready for disbursement</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">5d ago</small>
+                    <a href="loan-disbursement.html" class="btn btn-sm btn-primary mt-1">
+                      Disburse <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 6: Rejected -->
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header bg-danger text-white">
+              <h6 class="mb-0"><i class="bi bi-x-circle me-2"></i>Rejected (2)</h6>
+            </div>
+            <div class="card-body workflow-stage" style="max-height: 400px; overflow-y: auto;">
+              
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2453 - Raheem Lehner</h6>
+                    <p class="mb-1 text-muted small">$20,000 | Business Start-up</p>
+                    <span class="badge bg-danger text-white">Score: 580</span>
+                    <div class="mt-2">
+                      <small class="text-danger"><i class="bi bi-x-circle-fill"></i> Rejected: Low credit score</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">6d ago</small>
+                    <button class="btn btn-sm btn-outline-secondary mt-1" disabled>
+                      Closed
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="workflow-item mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">#LN-2447 - Mark Thompson</h6>
+                    <p class="mb-1 text-muted small">$25,000 | Real Estate</p>
+                    <span class="badge bg-danger text-white">Score: 595</span>
+                    <div class="mt-2">
+                      <small class="text-danger"><i class="bi bi-x-circle-fill"></i> Rejected: Insufficient collateral</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-muted d-block">7d ago</small>
+                    <button class="btn btn-sm btn-outline-secondary mt-1" disabled>
+                      Closed
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="copyright">
+          &copy; 2025 <strong>MicroFinance Pro</strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+          Version 1.0.0
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+
+  <script>
+    function moveToStage(button, stage) {
+      alert('Moving loan to stage ' + stage);
+      // In production, this would make an AJAX call to update the loan status
+    }
+
+    function rejectLoan(button) {
+      if(confirm('Are you sure you want to reject this loan application?')) {
+        alert('Loan rejected');
+        // In production, this would make an AJAX call to reject the loan
+      }
+    }
+  </script>
+
+</body>
+
+</html>

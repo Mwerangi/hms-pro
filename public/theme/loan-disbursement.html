@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Loan Disbursement - Microfinance Management System</title>
+
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@0,300;0,400;0,500;0,700&display=swap" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="assets/css/dashboard.css" rel="stylesheet">
+</head>
+
+<body class="dashboard-page">
+
+  <header id="header" class="header d-flex align-items-center fixed-top dashboard-header">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <a href="dashboard.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">MicroFinance Pro</h1>
+      </a>
+      <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
+          <li class="nav-item dropdown pe-3">
+            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+              <span class="d-none d-md-block dropdown-toggle ps-2">Admin User</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="dashboard.html">
+          <i class="bi bi-grid"></i><span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-target="#loans-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-cash-stack"></i><span>Loan Management</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="loans-nav" class="nav-content collapse show">
+          <li><a href="loan-requests.html"><i class="bi bi-circle"></i><span>Loan Requests</span></a></li>
+          <li><a href="loan-approval.html"><i class="bi bi-circle"></i><span>Approval Workflow</span></a></li>
+          <li><a href="loan-disbursement.html" class="active"><i class="bi bi-circle"></i><span>Disbursement</span></a></li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="payments.html">
+          <i class="bi bi-wallet2"></i><span>Payments & Collections</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="customers.html">
+          <i class="bi bi-people"></i><span>Customers/Borrowers</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Loan Disbursement</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="dashboard.html">Home</a></li>
+          <li class="breadcrumb-item">Loan Management</li>
+          <li class="breadcrumb-item active">Disbursement</li>
+        </ol>
+      </nav>
+    </div>
+
+    <section class="section">
+      
+      <!-- Stats -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card info-card">
+            <div class="card-body">
+              <h5 class="card-title">Pending Disbursement</h5>
+              <div class="d-flex align-items-center">
+                <div class="ps-3">
+                  <h6 class="mb-0 text-warning">8</h6>
+                  <span class="text-muted small">$124,500</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card info-card">
+            <div class="card-body">
+              <h5 class="card-title">Disbursed Today</h5>
+              <div class="d-flex align-items-center">
+                <div class="ps-3">
+                  <h6 class="mb-0 text-success">5</h6>
+                  <span class="text-muted small">$67,000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card info-card">
+            <div class="card-body">
+              <h5 class="card-title">This Month</h5>
+              <div class="d-flex align-items-center">
+                <div class="ps-3">
+                  <h6 class="mb-0 text-primary">42</h6>
+                  <span class="text-muted small">$823,450</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card info-card">
+            <div class="card-body">
+              <h5 class="card-title">Failed</h5>
+              <div class="d-flex align-items-center">
+                <div class="ps-3">
+                  <h6 class="mb-0 text-danger">2</h6>
+                  <span class="text-muted small">Need retry</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Disbursement -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Ready for Disbursement</h5>
+          
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" class="form-check-input"></th>
+                  <th>Loan ID</th>
+                  <th>Borrower</th>
+                  <th>Amount</th>
+                  <th>Bank Account</th>
+                  <th>Approval Date</th>
+                  <th>Disbursement Method</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" class="form-check-input"></td>
+                  <td><a href="#" class="text-primary">#LN-2456</a></td>
+                  <td>
+                    <div class="fw-bold">Bridie Kessler</div>
+                    <small class="text-muted">bridie@email.com</small>
+                  </td>
+                  <td class="fw-bold text-success">$5,000</td>
+                  <td>
+                    <small>****-****-****-1234</small><br>
+                    <small class="text-muted">Chase Bank</small>
+                  </td>
+                  <td>2025-12-03</td>
+                  <td><span class="badge bg-info">Bank Transfer</span></td>
+                  <td><span class="badge bg-warning">Ready</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#disburseModal">
+                      <i class="bi bi-send"></i> Disburse
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="form-check-input"></td>
+                  <td><a href="#" class="text-primary">#LN-2445</a></td>
+                  <td>
+                    <div class="fw-bold">Patricia Moore</div>
+                    <small class="text-muted">patricia@email.com</small>
+                  </td>
+                  <td class="fw-bold text-success">$14,000</td>
+                  <td>
+                    <small>****-****-****-5678</small><br>
+                    <small class="text-muted">Bank of America</small>
+                  </td>
+                  <td>2025-12-02</td>
+                  <td><span class="badge bg-info">Bank Transfer</span></td>
+                  <td><span class="badge bg-warning">Ready</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#disburseModal">
+                      <i class="bi bi-send"></i> Disburse
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="form-check-input"></td>
+                  <td><a href="#" class="text-primary">#LN-2441</a></td>
+                  <td>
+                    <div class="fw-bold">James Wilson</div>
+                    <small class="text-muted">james@email.com</small>
+                  </td>
+                  <td class="fw-bold text-success">$10,500</td>
+                  <td>
+                    <small>****-****-****-9012</small><br>
+                    <small class="text-muted">Wells Fargo</small>
+                  </td>
+                  <td>2025-12-01</td>
+                  <td><span class="badge bg-secondary">Check</span></td>
+                  <td><span class="badge bg-warning">Ready</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#disburseModal">
+                      <i class="bi bi-send"></i> Disburse
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-3">
+            <button class="btn btn-primary" onclick="bulkDisburse()">
+              <i class="bi bi-send-check"></i> Bulk Disburse Selected
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Recent Disbursements -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Recent Disbursements <span>| Last 7 days</span></h5>
+          
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Loan ID</th>
+                  <th>Borrower</th>
+                  <th>Amount</th>
+                  <th>Disbursement Date</th>
+                  <th>Method</th>
+                  <th>Transaction ID</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#" class="text-primary">#LN-2440</a></td>
+                  <td>
+                    <div class="fw-bold">Linda Garcia</div>
+                    <small class="text-muted">linda@email.com</small>
+                  </td>
+                  <td class="fw-bold">$8,750</td>
+                  <td>
+                    2025-12-04<br>
+                    <small class="text-muted">10:30 AM</small>
+                  </td>
+                  <td><span class="badge bg-info">Bank Transfer</span></td>
+                  <td><small>TXN-2025120401</small></td>
+                  <td><span class="badge bg-success"><i class="bi bi-check-circle"></i> Completed</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" title="View Receipt">
+                      <i class="bi bi-receipt"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#" class="text-primary">#LN-2439</a></td>
+                  <td>
+                    <div class="fw-bold">Michael Brown</div>
+                    <small class="text-muted">michael@email.com</small>
+                  </td>
+                  <td class="fw-bold">$12,000</td>
+                  <td>
+                    2025-12-04<br>
+                    <small class="text-muted">09:15 AM</small>
+                  </td>
+                  <td><span class="badge bg-info">Bank Transfer</span></td>
+                  <td><small>TXN-2025120402</small></td>
+                  <td><span class="badge bg-success"><i class="bi bi-check-circle"></i> Completed</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" title="View Receipt">
+                      <i class="bi bi-receipt"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#" class="text-primary">#LN-2438</a></td>
+                  <td>
+                    <div class="fw-bold">Susan Taylor</div>
+                    <small class="text-muted">susan@email.com</small>
+                  </td>
+                  <td class="fw-bold">$6,500</td>
+                  <td>
+                    2025-12-03<br>
+                    <small class="text-muted">02:45 PM</small>
+                  </td>
+                  <td><span class="badge bg-secondary">Check</span></td>
+                  <td><small>CHK-2025120301</small></td>
+                  <td><span class="badge bg-success"><i class="bi bi-check-circle"></i> Completed</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" title="View Receipt">
+                      <i class="bi bi-receipt"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#" class="text-primary">#LN-2437</a></td>
+                  <td>
+                    <div class="fw-bold">Robert Anderson</div>
+                    <small class="text-muted">robert@email.com</small>
+                  </td>
+                  <td class="fw-bold">$15,000</td>
+                  <td>
+                    2025-12-03<br>
+                    <small class="text-muted">11:20 AM</small>
+                  </td>
+                  <td><span class="badge bg-info">Bank Transfer</span></td>
+                  <td><small>TXN-2025120302</small></td>
+                  <td><span class="badge bg-warning"><i class="bi bi-clock"></i> Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-warning" title="Check Status">
+                      <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#" class="text-primary">#LN-2436</a></td>
+                  <td>
+                    <div class="fw-bold">Jennifer White</div>
+                    <small class="text-muted">jennifer@email.com</small>
+                  </td>
+                  <td class="fw-bold">$9,200</td>
+                  <td>
+                    2025-12-02<br>
+                    <small class="text-muted">03:50 PM</small>
+                  </td>
+                  <td><span class="badge bg-info">Bank Transfer</span></td>
+                  <td><small>TXN-2025120201</small></td>
+                  <td><span class="badge bg-danger"><i class="bi bi-x-circle"></i> Failed</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-danger" title="Retry">
+                      <i class="bi bi-arrow-repeat"></i> Retry
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <nav aria-label="Page navigation" class="mt-3">
+            <ul class="pagination justify-content-center">
+              <li class="page-item disabled">
+                <a class="page-link" href="#">Previous</a>
+              </li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+              </li>
+            </ul>
+          </nav>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Disburse Modal -->
+  <div class="modal fade" id="disburseModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Disburse Loan - #LN-2456</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Please verify all details before disbursing the loan
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <h6 class="fw-bold">Borrower Information</h6>
+              <table class="table table-sm">
+                <tr>
+                  <td class="fw-bold">Name:</td>
+                  <td>Bridie Kessler</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Email:</td>
+                  <td>bridie@email.com</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Phone:</td>
+                  <td>+1 234 567 8901</td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <h6 class="fw-bold">Loan Information</h6>
+              <table class="table table-sm">
+                <tr>
+                  <td class="fw-bold">Amount:</td>
+                  <td class="text-success fw-bold">$5,000.00</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Term:</td>
+                  <td>12 months</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Interest Rate:</td>
+                  <td>12% p.a.</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <hr>
+
+          <form>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Disbursement Method *</label>
+                <select class="form-select" required>
+                  <option value="bank_transfer" selected>Bank Transfer</option>
+                  <option value="check">Check</option>
+                  <option value="cash">Cash</option>
+                  <option value="mobile_money">Mobile Money</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Disbursement Date *</label>
+                <input type="date" class="form-control" value="2025-12-04" required>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Bank Name</label>
+                <input type="text" class="form-control" value="Chase Bank" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Account Number</label>
+                <input type="text" class="form-control" value="****-****-****-1234" readonly>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Account Holder Name</label>
+                <input type="text" class="form-control" value="Bridie Kessler" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Processing Fee</label>
+                <input type="number" class="form-control" value="50.00" step="0.01">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label class="form-label">Transaction Reference</label>
+                <input type="text" class="form-control" placeholder="Auto-generated or enter manually">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label class="form-label">Notes</label>
+                <textarea class="form-control" rows="2" placeholder="Add any notes about this disbursement..."></textarea>
+              </div>
+            </div>
+
+            <div class="alert alert-warning">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="confirmDisbursement" required>
+                <label class="form-check-label" for="confirmDisbursement">
+                  I confirm that all details are correct and authorize this disbursement
+                </label>
+              </div>
+            </div>
+
+          </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" onclick="processDisbursement()">
+            <i class="bi bi-send-check"></i> Process Disbursement
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="copyright">
+          &copy; 2025 <strong>MicroFinance Pro</strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+          Version 1.0.0
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+
+  <script>
+    function processDisbursement() {
+      if(document.getElementById('confirmDisbursement').checked) {
+        alert('Disbursement initiated successfully! Transaction ID: TXN-' + Date.now());
+        // In production, this would make an AJAX call to process the disbursement
+        bootstrap.Modal.getInstance(document.getElementById('disburseModal')).hide();
+      } else {
+        alert('Please confirm the disbursement by checking the confirmation box');
+      }
+    }
+
+    function bulkDisburse() {
+      const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]:checked');
+      if(checkboxes.length === 0) {
+        alert('Please select at least one loan to disburse');
+      } else {
+        if(confirm(`Are you sure you want to disburse ${checkboxes.length} loan(s)?`)) {
+          alert(`Processing ${checkboxes.length} disbursements...`);
+        }
+      }
+    }
+  </script>
+
+</body>
+
+</html>

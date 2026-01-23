@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Register - MicroFinance Manager</title>
+  <meta name="description" content="Register for MicroFinance Management System">
+  <meta name="keywords" content="microfinance, register, signup">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700&family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="assets/css/microfinance.css" rel="stylesheet">
+</head>
+
+<body class="register-page">
+
+  <div class="register-container">
+    <div class="row g-0">
+      <!-- Left Side - Info Section -->
+      <div class="col-lg-5 col-md-6 d-none d-md-block">
+        <div class="register-visual">
+          <div class="visual-overlay">
+            <div class="visual-content">
+              <div class="logo-section-large">
+                <i class="bi bi-bank2"></i>
+                <h2>MicroFinance</h2>
+              </div>
+              <h3>Join Our Platform</h3>
+              <p>Manage your microfinance operations efficiently</p>
+              <div class="benefits-list">
+                <div class="benefit-item">
+                  <i class="bi bi-shield-check"></i>
+                  <div>
+                    <h5>Secure & Reliable</h5>
+                    <p>Bank-grade security for all transactions</p>
+                  </div>
+                </div>
+                <div class="benefit-item">
+                  <i class="bi bi-graph-up-arrow"></i>
+                  <div>
+                    <h5>Real-time Analytics</h5>
+                    <p>Track performance with live dashboards</p>
+                  </div>
+                </div>
+                <div class="benefit-item">
+                  <i class="bi bi-people"></i>
+                  <div>
+                    <h5>Client Management</h5>
+                    <p>Comprehensive client database & tracking</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side - Registration Form -->
+      <div class="col-lg-7 col-md-6">
+        <div class="register-form-wrapper">
+          <div class="register-header">
+            <h2>Create Account</h2>
+            <p>Fill in your details to get started</p>
+          </div>
+
+          <form class="register-form" id="registerForm">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <div class="input-icon">
+                  <i class="bi bi-person"></i>
+                  <input type="text" class="form-control" id="firstName" placeholder="John" required>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <div class="input-icon">
+                  <i class="bi bi-person"></i>
+                  <input type="text" class="form-control" id="lastName" placeholder="Doe" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <div class="input-icon">
+                <i class="bi bi-envelope"></i>
+                <input type="email" class="form-control" id="email" placeholder="john.doe@example.com" required>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="phone" class="form-label">Phone Number</label>
+              <div class="input-icon">
+                <i class="bi bi-telephone"></i>
+                <input type="tel" class="form-control" id="phone" placeholder="+1 234 567 8900" required>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="organization" class="form-label">Organization Name</label>
+              <div class="input-icon">
+                <i class="bi bi-building"></i>
+                <input type="text" class="form-control" id="organization" placeholder="Your MFI Name" required>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="role" class="form-label">Role</label>
+              <div class="input-icon">
+                <i class="bi bi-person-badge"></i>
+                <select class="form-control" id="role" required>
+                  <option value="">Select your role</option>
+                  <option value="admin">Administrator</option>
+                  <option value="manager">Branch Manager</option>
+                  <option value="officer">Loan Officer</option>
+                  <option value="accountant">Accountant</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-icon">
+                  <i class="bi bi-lock"></i>
+                  <input type="password" class="form-control" id="password" placeholder="Min. 8 characters" required>
+                  <span class="toggle-password" onclick="togglePassword('password', 'toggleIcon1')">
+                    <i class="bi bi-eye" id="toggleIcon1"></i>
+                  </span>
+                </div>
+                <small class="text-muted">Must be at least 8 characters</small>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <div class="input-icon">
+                  <i class="bi bi-lock"></i>
+                  <input type="password" class="form-control" id="confirmPassword" placeholder="Repeat password" required>
+                  <span class="toggle-password" onclick="togglePassword('confirmPassword', 'toggleIcon2')">
+                    <i class="bi bi-eye" id="toggleIcon2"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="terms" required>
+              <label class="form-check-label" for="terms">
+                I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3">
+              <i class="bi bi-person-plus me-2"></i>Create Account
+            </button>
+
+            <div class="login-link text-center mt-3">
+              <p>Already have an account? <a href="login.html">Login here</a></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 600,
+      easing: 'ease-in-out',
+      once: true
+    });
+
+    // Toggle password visibility
+    function togglePassword(inputId, iconId) {
+      const passwordInput = document.getElementById(inputId);
+      const toggleIcon = document.getElementById(iconId);
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('bi-eye');
+        toggleIcon.classList.add('bi-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('bi-eye-slash');
+        toggleIcon.classList.add('bi-eye');
+      }
+    }
+
+    // Handle registration form submission
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+
+      if (password.length < 8) {
+        alert('Password must be at least 8 characters long!');
+        return;
+      }
+
+      // Simulate successful registration
+      alert('Registration successful! You can now login with your credentials.');
+      window.location.href = 'login.html';
+    });
+  </script>
+
+</body>
+</html>
