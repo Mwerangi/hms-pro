@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PatientCharge;
 use App\Models\Prescription;
 use App\Models\PrescriptionItem;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +21,7 @@ class PharmacyController extends Controller
         $filterDate = $request->get('date', now()->toDateString());
         
         // Get pending prescriptions (not dispensed)
-        $pendingPrescriptions = Prescription::with(['patient', 'doctor', 'consultation.appointment', 'items'])
+        $pendingPrescriptions = Prescription::with(['patient', 'doctor', 'consultation.appointment', 'items', 'bill'])
             ->where('status', '!=', 'dispensed')
             ->where('status', '!=', 'cancelled')
             ->whereDate('prescription_date', $filterDate)
@@ -53,7 +55,7 @@ class PharmacyController extends Controller
      */
     public function show($id)
     {
-        $prescription = Prescription::with(['patient', 'doctor', 'consultation.appointment', 'items', 'dispensedByUser'])
+        $prescription = Prescription::with(['patient', 'doctor', 'consultation.appointment', 'items', 'dispensedByUser', 'bill', 'emergencyApprovedBy'])
             ->findOrFail($id);
         
         return view('pharmacy.show', compact('prescription'));
@@ -73,18 +75,34 @@ class PharmacyController extends Controller
             
             $prescription = Prescription::findOrFail($id);
             
+            // Check payment verification before dispensing
+            if (!$prescription->hasPaymentVerification()) {
+                DB::rollBack();
+                return redirect()
+                    ->back()
+                    ->with('error', 'Cannot dispense medication: Payment verification required. Patient must pay at least 50% of the bill or prescription must be marked as emergency.');
+            }
+            
             // Update prescription status
             $prescription->status = 'dispensed';
             $prescription->dispensed_by = Auth::id();
             $prescription->dispensed_at = now();
             $prescription->pharmacy_notes = $request->pharmacy_notes;
             $prescription->save();
+
+            // Note: Charges already added when prescription was created
+            // No need to add charges again during dispensing
             
             DB::commit();
             
+            $message = 'Prescription dispensed successfully. Prescription #' . $prescription->prescription_number;
+            if ($prescription->is_emergency) {
+                $message .= ' (Emergency Override Applied)';
+            }
+            
             return redirect()
                 ->route('pharmacy.dashboard')
-                ->with('success', 'Prescription dispensed successfully. Prescription #' . $prescription->prescription_number);
+                ->with('success', $message);
                 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -120,4 +138,42 @@ class PharmacyController extends Controller
                 ->with('error', 'Failed to cancel prescription: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Mark prescription as emergency to bypass payment verification
+     */
+    public function markEmergency(Request $request, $id)
+    {
+        $request->validate([
+            'emergency_reason' => 'required|string|max:500',
+        ]);
+        
+        try {
+            $prescription = Prescription::findOrFail($id);
+            
+            // Only allow doctors and admins to mark as emergency
+            if (!in_array(auth()->user()->role, ['doctor', 'admin'])) {
+                return redirect()
+                    ->back()
+                    ->with('error', 'Only doctors and administrators can mark prescriptions as emergency.');
+            }
+            
+            $prescription->markAsEmergency(auth()->id(), $request->emergency_reason);
+            
+            return redirect()
+                ->back()
+                ->with('success', 'Prescription marked as emergency. Payment verification bypassed.');
+                
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to mark prescription as emergency: ' . $e->getMessage());
+        }
+    }
+
 }
+
+// Note: addPharmacyCharges() method removed
+// Charges are now added when prescription is created in ConsultationController
+// This ensures medication costs are included in the bill BEFORE payment
+

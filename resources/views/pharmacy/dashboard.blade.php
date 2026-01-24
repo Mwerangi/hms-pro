@@ -224,6 +224,7 @@
               <th>Date</th>
               <th>Items</th>
               <th>Status</th>
+              <th>Payment</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -262,6 +263,21 @@
                                         <span class="badge bg-warning">Pending</span>
                                     @elseif($prescription->status === 'partially-dispensed')
                                         <span class="badge bg-info">Partially Dispensed</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($prescription->is_emergency)
+                                        <span class="badge bg-danger" data-bs-toggle="tooltip" title="Emergency - Payment bypassed">
+                                            <i class="bi bi-exclamation-triangle-fill"></i> Emergency
+                                        </span>
+                                    @elseif($prescription->hasPaymentVerification())
+                                        <span class="badge bg-success" data-bs-toggle="tooltip" title="Payment verified - Can dispense">
+                                            <i class="bi bi-check-circle-fill"></i> Verified
+                                        </span>
+                                    @else
+                                        <span class="badge bg-secondary" data-bs-toggle="tooltip" title="Payment verification required">
+                                            <i class="bi bi-lock-fill"></i> Pending
+                                        </span>
                                     @endif
                                 </td>
                                 <td>
@@ -357,4 +373,14 @@
     @endif
   </div>
 </div>
+
+<script>
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
 @endsection

@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Consultation;
 use App\Models\Appointment;
 use App\Models\Patient;
+use App\Models\PatientCharge;
 use App\Models\Prescription;
 use App\Models\PrescriptionItem;
 use App\Models\LabOrder;
 use App\Models\Admission;
+use App\Models\Service;
 use App\Models\Ward;
 use App\Models\Bed;
 use Illuminate\Http\Request;
@@ -209,7 +211,12 @@ class ConsultationController extends Controller
                 ->with('error', 'This consultation cannot be edited.');
         }
 
-        return view('consultations.edit', compact('consultation'));
+        // Get active medicines for prescription dropdown
+        $medicines = \App\Models\Medicine::active()
+            ->orderBy('medicine_name')
+            ->get();
+
+        return view('consultations.edit', compact('consultation', 'medicines'));
     }
 
     public function update(Request $request, Consultation $consultation)
@@ -282,7 +289,7 @@ class ConsultationController extends Controller
         $validated = $request->validate([
             'special_instructions' => 'nullable|string',
             'items' => 'required|array|min:1',
-            'items.*.medicine_name' => 'required|string',
+            'items.*.medicine_id' => 'required|exists:medicines,id',
             'items.*.dosage' => 'required|string',
             'items.*.frequency' => 'required|string',
             'items.*.duration' => 'required|string',
@@ -300,16 +307,29 @@ class ConsultationController extends Controller
             ]);
 
             foreach ($validated['items'] as $item) {
+                // Get medicine details
+                $medicine = \App\Models\Medicine::findOrFail($item['medicine_id']);
+                
+                // Calculate total price
+                $totalPrice = $item['quantity'] * $medicine->unit_price;
+                
                 PrescriptionItem::create([
                     'prescription_id' => $prescription->id,
-                    'medicine_name' => $item['medicine_name'],
+                    'medicine_id' => $medicine->id,
+                    'medicine_name' => $medicine->medicine_name,
+                    'medicine_type' => $medicine->medicine_type,
                     'dosage' => $item['dosage'],
                     'frequency' => $item['frequency'],
                     'duration' => $item['duration'],
                     'quantity' => $item['quantity'],
+                    'price_per_unit' => $medicine->unit_price,
+                    'total_price' => $totalPrice,
                     'instructions' => $item['instructions'] ?? null,
                 ]);
             }
+
+            // Add medication charges immediately (Hybrid Approach)
+            $this->addPrescriptionCharges($prescription);
 
             DB::commit();
 
@@ -331,7 +351,7 @@ class ConsultationController extends Controller
             'clinical_notes' => 'nullable|string',
         ]);
 
-        LabOrder::create([
+        $labOrder = LabOrder::create([
             'consultation_id' => $consultation->id,
             'patient_id' => $consultation->patient_id,
             'doctor_id' => $consultation->doctor_id,
@@ -341,7 +361,88 @@ class ConsultationController extends Controller
             'clinical_notes' => $validated['clinical_notes'] ?? null,
         ]);
 
+        // Auto-add lab test charges from service catalog
+        $this->addLabTestCharges($labOrder, $validated['tests_ordered']);
+
         return redirect()->route('consultations.show', $consultation)
             ->with('success', 'Lab order added successfully.');
     }
+
+    /**
+     * Auto-add lab test charges from service catalog
+     */
+    protected function addLabTestCharges(LabOrder $labOrder, string $testsOrdered)
+    {
+        // Parse the tests ordered (comma-separated or line-separated)
+        $tests = preg_split('/[,\n]+/', $testsOrdered);
+        
+        foreach ($tests as $test) {
+            $test = trim($test);
+            if (empty($test)) continue;
+            
+            // Try to match test name with service catalog
+            // This is a basic implementation - you can make it smarter with fuzzy matching
+            $service = Service::where('category', 'laboratory')
+                ->where('is_active', true)
+                ->where(function($query) use ($test) {
+                    $query->where('service_name', 'LIKE', "%{$test}%")
+                          ->orWhere('service_code', 'LIKE', "%{$test}%");
+                })
+                ->first();
+            
+            if ($service) {
+                PatientCharge::createFromService(
+                    $service,
+                    $labOrder->patient,
+                    LabOrder::class,
+                    $labOrder->id
+                );
+            }
+        }
+    }
+
+    /**
+     * Add prescription charges when prescription is created
+     * Hybrid Approach: Dispensing fee + Medication costs
+     */
+    protected function addPrescriptionCharges(Prescription $prescription)
+    {
+        // 1. Add dispensing fee (professional service from catalog)
+        $dispensingService = Service::where('service_code', 'PHARM-001')
+            ->where('is_active', true)
+            ->first();
+        
+        if ($dispensingService) {
+            PatientCharge::createFromService(
+                $dispensingService,
+                $prescription->patient,
+                Prescription::class,
+                $prescription->id
+            );
+        }
+
+        // 2. Add medication costs (from prescription items)
+        foreach ($prescription->items as $item) {
+            // Get medicine name from relationship or fallback to medicine_name field
+            $medicineName = $item->medicine ? $item->medicine->full_name : $item->medicine_name;
+            
+            $charge = new PatientCharge([
+                'patient_id' => $prescription->patient_id,
+                'service_id' => null, // Medications don't link to service catalog
+                'source_type' => Prescription::class,
+                'source_id' => $prescription->id,
+                'quantity' => $item->quantity,
+                'unit_price' => $item->price_per_unit,
+                'taxable' => false, // Medications typically tax-exempt in Tanzania
+                'tax_percentage' => 0,
+                'added_by' => auth()->id(),
+                'service_date' => now(),
+                'notes' => "Medication: {$medicineName} ({$item->dosage})",
+            ]);
+
+            $charge->calculateTotals();
+            $charge->save();
+        }
+    }
 }
+

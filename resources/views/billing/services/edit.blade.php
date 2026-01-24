@@ -71,7 +71,7 @@
             </div>
 
             <div class="col-md-6">
-              <label for="standard_charge" class="form-label">Standard Charge ($) <span class="text-danger">*</span></label>
+              <label for="standard_charge" class="form-label">Standard Charge (TSh) <span class="text-danger">*</span></label>
               <input type="number" step="0.01" class="form-control @error('standard_charge') is-invalid @enderror" 
                      id="standard_charge" name="standard_charge" value="{{ old('standard_charge', $service->standard_charge) }}" required>
               @error('standard_charge')

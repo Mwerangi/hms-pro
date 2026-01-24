@@ -3,45 +3,242 @@
 @section('title', 'Create Bill')
 
 @section('breadcrumbs')
-<li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('services.index') }}">Accounting</a></li>
 <li class="breadcrumb-item"><a href="{{ route('bills.index') }}">Bills</a></li>
 <li class="breadcrumb-item active" aria-current="page">Create</li>
 @endsection
 
 @push('styles')
 <style>
+  /* Modern Minimalistic Design */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+
+  .page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 4px 0;
+  }
+
+  .page-subtitle {
+    color: #6b7280;
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .form-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .form-section {
+    padding: 24px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .form-section:last-child {
+    border-bottom: none;
+  }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+
+  .form-control, .form-select {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #111827;
+    transition: all 0.2s;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+  }
+
   .service-row {
     background: #f9fafb;
-    padding: 15px;
+    padding: 16px;
     border-radius: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     border: 1px solid #e5e7eb;
+    transition: all 0.2s;
   }
-  .total-section {
+
+  .service-row:hover {
+    border-color: #d1d5db;
+    background: #f3f4f6;
+  }
+
+  .summary-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    position: sticky;
+    top: 100px;
+  }
+
+  .summary-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 20px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 14px;
+    color: #6b7280;
+  }
+
+  .summary-row strong {
+    color: #111827;
+  }
+
+  .summary-total {
+    border-top: 2px solid #e5e7eb;
+    padding-top: 16px;
+    margin-top: 16px;
+  }
+
+  .summary-total .summary-row {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .btn-add-service {
+    border: 1px dashed #d1d5db;
+    background: transparent;
+    color: #6b7280;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-add-service:hover {
+    border-color: #667eea;
+    color: #667eea;
+    background: #f9fafb;
+  }
+
+  .btn-remove {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid #fee2e2;
+    background: white;
+    color: #dc2626;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-remove:hover {
+    background: #fee2e2;
+    border-color: #dc2626;
+  }
+
+  .btn-primary-custom {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-top: 20px;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary-custom:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transform: translateY(-1px);
+    color: white;
+  }
+
+  .btn-secondary-custom {
+    background: white;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-secondary-custom:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    color: #374151;
+  }
+
+  .item-total-display {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    text-align: right;
   }
 </style>
 @endpush
 
 @section('content')
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Create New Bill</h1>
+    <p class="page-subtitle">Generate bill for patient services</p>
+  </div>
+</div>
+
 <div class="row">
-  <div class="col-md-8">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="mb-0">Create New Bill</h5>
-      </div>
-      <div class="card-body">
-        <form action="{{ route('bills.store') }}" method="POST" id="billForm">
-          @csrf
+  <div class="col-lg-8">
+    <form action="{{ route('bills.store') }}" method="POST" id="billForm">
+      @csrf
+      <div class="form-card">
+        <div class="form-section">
+          <div class="section-title">Bill Information</div>
           
-          <div class="row mb-3">
+          <div class="row g-3 mb-3">
             <div class="col-md-6">
               <label for="patient_id" class="form-label">Patient <span class="text-danger">*</span></label>
-              <select class="form-control @error('patient_id') is-invalid @enderror" 
+              <select class="form-select @error('patient_id') is-invalid @enderror" 
                       id="patient_id" name="patient_id" required>
                 <option value="">Select Patient</option>
                 @foreach($patients as $patient)
@@ -57,7 +254,7 @@
 
             <div class="col-md-3">
               <label for="bill_type" class="form-label">Bill Type <span class="text-danger">*</span></label>
-              <select class="form-control @error('bill_type') is-invalid @enderror" 
+              <select class="form-select @error('bill_type') is-invalid @enderror" 
                       id="bill_type" name="bill_type" required>
                 <option value="opd" {{ old('bill_type') === 'opd' ? 'selected' : '' }}>OPD</option>
                 <option value="emergency" {{ old('bill_type') === 'emergency' ? 'selected' : '' }}>Emergency</option>
@@ -71,7 +268,7 @@
 
             <div class="col-md-3">
               <label for="visit_type" class="form-label">Visit Type</label>
-              <select class="form-control" id="visit_type" name="visit_type">
+              <select class="form-select" id="visit_type" name="visit_type">
                 <option value="">Select Type</option>
                 <option value="opd">OPD</option>
                 <option value="emergency">Emergency</option>
@@ -79,54 +276,53 @@
             </div>
           </div>
 
-          <hr>
-          <h6 class="mb-3">Services/Items</h6>
-          
+          <div class="section-title mt-4">Services & Items</div>
+        
           <div id="servicesContainer">
             <div class="service-row" data-index="0">
-              <div class="row align-items-end">
+              <div class="row g-3 align-items-end">
                 <div class="col-md-5">
                   <label class="form-label">Service <span class="text-danger">*</span></label>
-                  <select class="form-control service-select" name="services[0][service_id]" required>
-                    <option value="">Select Service</option>
-                    @foreach($services as $service)
-                      <option value="{{ $service->id }}" 
-                              data-price="{{ $service->standard_charge }}"
-                              data-taxable="{{ $service->taxable }}"
-                              data-tax="{{ $service->tax_percentage }}">
-                        {{ $service->service_name }} - ${{ number_format($service->standard_charge, 2) }}
-                      </option>
-                    @endforeach
-                  </select>
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label">Qty <span class="text-danger">*</span></label>
-                  <input type="number" class="form-control quantity-input" name="services[0][quantity]" value="1" min="1" required>
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label">Discount %</label>
-                  <input type="number" class="form-control discount-input" name="services[0][discount_percentage]" value="0" min="0" max="100" step="0.01">
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label">Amount</label>
-                  <input type="text" class="form-control item-total" readonly value="0.00">
-                </div>
-                <div class="col-md-1">
-                  <button type="button" class="btn btn-danger btn-sm remove-service" disabled>
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
+                  <select class="form-select service-select" name="services[0][service_id]" required>
+                  <option value="">Select Service</option>
+                  @foreach($services as $service)
+                    <option value="{{ $service->id }}" 
+                            data-price="{{ $service->standard_charge }}"
+                            data-taxable="{{ $service->taxable }}"
+                            data-tax="{{ $service->tax_percentage }}">
+                      {{ $service->service_name }} - TSh {{ number_format($service->standard_charge, 2) }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Quantity</label>
+                <input type="number" class="form-control quantity-input" name="services[0][quantity]" value="1" min="1" required>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Discount %</label>
+                <input type="number" class="form-control discount-input" name="services[0][discount_percentage]" value="0" min="0" max="100" step="0.01">
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Amount</label>
+                <div class="item-total-display">0.00</div>
+                <input type="hidden" class="item-total" value="0.00">
+              </div>
+              <div class="col-md-1">
+                <button type="button" class="btn-remove remove-service" disabled>
+                  <i class="bi bi-trash"></i>
+                </button>
               </div>
             </div>
           </div>
 
-          <button type="button" class="btn btn-sm btn-outline-primary" id="addService">
-            <i class="bi bi-plus-circle me-1"></i>Add Another Service
+          <button type="button" class="btn-add-service w-100" id="addService">
+            <i class="bi bi-plus-circle me-2"></i>Add Another Service
           </button>
 
-          <hr>
-
-          <div class="row">
+          <div class="section-title mt-4">Additional Information</div>
+        
+          <div class="row g-3 mb-3">
             <div class="col-md-6">
               <label for="discount_percentage" class="form-label">Overall Discount %</label>
               <input type="number" class="form-control" id="discount_percentage" name="discount_percentage" value="0" min="0" max="100" step="0.01">
@@ -137,43 +333,48 @@
             </div>
           </div>
 
-          <div class="mb-3 mt-3">
+          <div class="mb-3">
             <label for="notes" class="form-label">Notes</label>
-            <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
+            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
           </div>
 
           <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary">
-              <i class="bi bi-check-circle me-1"></i>Generate Bill
+            <button type="submit" class="btn-primary-custom">
+              <i class="bi bi-check-circle me-2"></i>Generate Bill
             </button>
-            <a href="{{ route('bills.index') }}" class="btn btn-secondary">
-              <i class="bi bi-x-circle me-1"></i>Cancel
+            <a href="{{ route('bills.index') }}" class="btn-secondary-custom">
+              <i class="bi bi-x-circle me-2"></i>Cancel
             </a>
           </div>
-        </form>
+        </form></a>
+          </a>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="col-md-4">
-    <div class="total-section">
-      <h5 class="mb-3">Bill Summary</h5>
-      <div class="d-flex justify-content-between mb-2">
+  <div class="col-lg-4">
+    <div class="summary-card">
+      <h3 class="summary-title">Bill Summary</h3>
+      
+      <div class="summary-row">
         <span>Subtotal:</span>
-        <strong id="subtotal">$0.00</strong>
+        <strong id="subtotal">TSh 0.00</strong>
       </div>
-      <div class="d-flex justify-content-between mb-2">
+      <div class="summary-row">
         <span>Discount:</span>
-        <strong id="discount">$0.00</strong>
+        <strong id="discount">TSh 0.00</strong>
       </div>
-      <div class="d-flex justify-content-between mb-2">
+      <div class="summary-row">
         <span>Tax:</span>
-        <strong id="tax">$0.00</strong>
+        <strong id="tax">TSh 0.00</strong>
       </div>
-      <hr style="border-color: rgba(255,255,255,0.3);">
-      <div class="d-flex justify-content-between">
-        <h5>Total Amount:</h5>
-        <h4 id="totalAmount">$0.00</h4>
+      
+      <div class="summary-total">
+        <div class="summary-row">
+          <span>Total Amount:</span>
+          <strong id="totalAmount">TSh 0.00</strong>
+        </div>
       </div>
     </div>
   </div>
@@ -193,11 +394,13 @@ document.getElementById('addService').addEventListener('click', function() {
     if (name) {
       input.setAttribute('name', name.replace(/\[\d+\]/, `[${serviceIndex}]`));
     }
-    if (input.type !== 'button') {
+    if (input.type !== 'button' && input.type !== 'hidden') {
       input.value = input.classList.contains('quantity-input') ? '1' : '0';
     }
   });
   
+  newRow.querySelector('.item-total-display').textContent = '0.00';
+  newRow.querySelector('.item-total').value = '0.00';
   newRow.querySelector('.remove-service').disabled = false;
   container.appendChild(newRow);
   serviceIndex++;
@@ -239,6 +442,7 @@ function calculateItemTotal(e) {
       amount += amount * (taxRate / 100);
     }
     
+    row.querySelector('.item-total-display').textContent = amount.toFixed(2);
     row.querySelector('.item-total').value = amount.toFixed(2);
   }
   
@@ -256,9 +460,9 @@ function calculateTotals() {
   const discountAmount = subtotal * (overallDiscount / 100);
   const total = subtotal - discountAmount;
   
-  document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
-  document.getElementById('discount').textContent = '$' + discountAmount.toFixed(2);
-  document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
+  document.getElementById('subtotal').textContent = 'TSh ' + subtotal.toFixed(2);
+  document.getElementById('discount').textContent = 'TSh ' + discountAmount.toFixed(2);
+  document.getElementById('totalAmount').textContent = 'TSh ' + total.toFixed(2);
 }
 
 document.getElementById('discount_percentage').addEventListener('input', calculateTotals);

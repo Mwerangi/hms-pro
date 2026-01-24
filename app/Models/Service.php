@@ -35,6 +35,11 @@ class Service extends Model
         return $this->hasMany(BillItem::class);
     }
 
+    public function charges()
+    {
+        return $this->hasMany(PatientCharge::class);
+    }
+
     // Helper methods
     public function getChargeWithTax()
     {

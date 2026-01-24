@@ -14,6 +14,9 @@ use App\Http\Controllers\IpdController;
 use App\Http\Controllers\WardController;
 use App\Http\Controllers\BedController;
 use App\Http\Controllers\AdmissionController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\BillController;
+use App\Http\Controllers\AccountingDashboardController;
 
 // Redirect root to login
 Route::get('/', function () {
@@ -44,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/appointments/{appointment}/start-consultation', [AppointmentController::class, 'startConsultation'])->name('appointments.start-consultation');
     Route::post('/appointments/{appointment}/complete-consultation', [AppointmentController::class, 'completeConsultation'])->name('appointments.complete-consultation');
     Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+    Route::post('/appointments/{appointment}/reopen', [AppointmentController::class, 'reopen'])->name('appointments.reopen');
     Route::get('/doctor/appointments', [AppointmentController::class, 'doctorDashboard'])->name('doctor.appointments');
     
     // Nursing Station Routes
@@ -95,6 +99,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pharmacy/prescriptions/{prescription}', [PharmacyController::class, 'show'])->name('pharmacy.show');
     Route::post('/pharmacy/prescriptions/{prescription}/dispense', [PharmacyController::class, 'dispense'])->name('pharmacy.dispense');
     Route::post('/pharmacy/prescriptions/{prescription}/cancel', [PharmacyController::class, 'cancel'])->name('pharmacy.cancel');
+    Route::post('/pharmacy/prescriptions/{prescription}/mark-emergency', [PharmacyController::class, 'markEmergency'])->name('pharmacy.mark-emergency');
     
     // IPD Routes
     Route::get('/ipd/dashboard', [IpdController::class, 'dashboard'])->name('ipd.dashboard');
@@ -120,9 +125,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/api/wards/{ward}/available-beds', [WardController::class, 'getAvailableBeds'])->name('api.wards.available-beds');
     
     // Billing Routes
+    Route::get('/accounting/dashboard', [AccountingDashboardController::class, 'index'])->name('accounting.dashboard');
+    Route::get('/accounting/patient/{patient}/charges', [AccountingDashboardController::class, 'patientCharges'])->name('accounting.patient-charges');
+    
     Route::resource('services', ServiceController::class);
     Route::post('/services/{service}/toggle-status', [ServiceController::class, 'toggleStatus'])->name('services.toggle-status');
     Route::resource('bills', BillController::class);
     Route::post('/bills/{bill}/add-payment', [BillController::class, 'addPayment'])->name('bills.add-payment');
     Route::get('/bills/{bill}/receipt', [BillController::class, 'receipt'])->name('bills.receipt');
+    Route::post('/bills/generate-from-charges/{patient}', [BillController::class, 'generateFromCharges'])->name('bills.generate-from-charges');
 });

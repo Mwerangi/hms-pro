@@ -7,9 +7,19 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::orderBy('category')->orderBy('service_name')->get();
+        $query = Service::query();
+        
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+        
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'active');
+        }
+        
+        $services = $query->orderBy('category')->orderBy('service_name')->paginate(15);
         return view('billing.services.index', compact('services'));
     }
 

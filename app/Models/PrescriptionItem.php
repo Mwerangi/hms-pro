@@ -11,6 +11,7 @@ class PrescriptionItem extends Model
 
     protected $fillable = [
         'prescription_id',
+        'medicine_id',
         'medicine_name',
         'medicine_type',
         'dosage',
@@ -19,6 +20,8 @@ class PrescriptionItem extends Model
         'quantity',
         'route',
         'instructions',
+        'price_per_unit',
+        'total_price',
         'quantity_dispensed',
         'status',
     ];
@@ -26,11 +29,18 @@ class PrescriptionItem extends Model
     protected $casts = [
         'quantity' => 'integer',
         'quantity_dispensed' => 'integer',
+        'price_per_unit' => 'decimal:2',
+        'total_price' => 'decimal:2',
     ];
 
     public function prescription()
     {
         return $this->belongsTo(Prescription::class);
+    }
+
+    public function medicine()
+    {
+        return $this->belongsTo(Medicine::class);
     }
 
     public function dispense($quantity = null)

@@ -132,7 +132,66 @@
                     <h5 class="mb-0"><i class="bi bi-check-circle me-2"></i>Dispense Prescription</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('pharmacy.dispense', $prescription->id) }}" method="POST">
+                    @php
+                        $hasPaymentVerification = $prescription->hasPaymentVerification();
+                        $paymentPercentage = 0;
+                        if ($prescription->bill) {
+                            $paymentPercentage = ($prescription->bill->paid_amount / $prescription->bill->total_amount) * 100;
+                        }
+                    @endphp
+
+                    <!-- Payment Status Alert -->
+                    @if($prescription->is_emergency)
+                        <div class="alert alert-danger border-danger">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                                <div>
+                                    <strong>EMERGENCY PRESCRIPTION</strong>
+                                    <p class="mb-1">Payment verification bypassed for urgent medical care.</p>
+                                    <small class="text-muted">
+                                        Approved by: {{ $prescription->emergencyApprovedBy->name ?? 'N/A' }}<br>
+                                        Reason: {{ $prescription->emergency_reason }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($hasPaymentVerification)
+                        <div class="alert alert-success border-success">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+                                <div>
+                                    <strong>Payment Verified ✓</strong>
+                                    <p class="mb-0">Patient has paid {{ number_format($paymentPercentage, 1) }}% of the bill. Medication can be dispensed.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="alert alert-warning border-warning">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-exclamation-circle-fill fs-4 me-3"></i>
+                                <div>
+                                    <strong>Payment Verification Required</strong>
+                                    <p class="mb-1">Patient must pay at least 50% of the bill before medication can be dispensed.</p>
+                                    @if($prescription->bill)
+                                        <small class="text-muted">
+                                            Current payment: TSh {{ number_format($prescription->bill->paid_amount) }} 
+                                            ({{ number_format($paymentPercentage, 1) }}% of TSh {{ number_format($prescription->bill->total_amount) }})
+                                        </small>
+                                    @else
+                                        <small class="text-muted">No bill has been generated yet. Please contact accounting department.</small>
+                                    @endif
+                                    <hr>
+                                    <small><strong>Options:</strong></small>
+                                    <ul class="mb-0 small">
+                                        <li>Patient should make payment at billing counter</li>
+                                        <li>Doctor/Admin can mark as emergency if urgent</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('pharmacy.dispense', $prescription->id) }}" method="POST" id="dispenseForm">
                         @csrf
                         <div class="mb-3">
                             <label for="pharmacy_notes" class="form-label">Pharmacy Notes (Optional)</label>
@@ -140,21 +199,46 @@
                                       id="pharmacy_notes" 
                                       name="pharmacy_notes" 
                                       rows="3"
+                                      {{ !$hasPaymentVerification ? 'disabled' : '' }}
                                       placeholder="Add any notes about the dispensing (e.g., patient counseling provided, substitutions made, etc.)">{{ old('pharmacy_notes') }}</textarea>
                             @error('pharmacy_notes')
                                 <div class="text-danger small mt-1">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
+                        @if($hasPaymentVerification)
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
                             Please verify all medicines before dispensing. This action cannot be undone.
                         </div>
+                        @endif
 
                         <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check-circle me-2"></i>Dispense Prescription
-                            </button>
+                            @if($hasPaymentVerification)
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Dispense Prescription
+                                </button>
+                            @else
+                                <button type="button" 
+                                        class="btn btn-secondary" 
+                                        disabled 
+                                        data-bs-toggle="tooltip" 
+                                        title="Payment verification required before dispensing">
+                                    <i class="bi bi-lock me-2"></i>Dispense Prescription (Locked)
+                                </button>
+                            @endif
+                            
+                            @can('doctor')
+                            @if(!$hasPaymentVerification && !$prescription->is_emergency)
+                                <button type="button" 
+                                        class="btn btn-danger" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#emergencyModal">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Mark as Emergency
+                                </button>
+                            @endif
+                            @endcan
+                            
                             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
                                 <i class="bi bi-x-circle me-2"></i>Cancel Prescription
                             </button>
@@ -286,9 +370,58 @@
     </div>
 </div>
 
+<!-- Emergency Override Modal -->
+<div class="modal fade" id="emergencyModal" tabindex="-1" aria-labelledby="emergencyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('pharmacy.mark-emergency', $prescription->id) }}" method="POST">
+                @csrf
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="emergencyModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Mark as Emergency
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <strong><i class="bi bi-exclamation-triangle me-2"></i>Emergency Override</strong>
+                        <p class="mb-0">This will bypass payment verification and allow immediate dispensing. Use only for life-threatening situations.</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="emergency_reason" class="form-label">Medical Justification <span class="text-danger">*</span></label>
+                        <textarea class="form-control" 
+                                  id="emergency_reason" 
+                                  name="emergency_reason" 
+                                  rows="4"
+                                  required
+                                  placeholder="Provide detailed medical justification for emergency override (e.g., anaphylactic shock, severe hemorrhage, etc.)"></textarea>
+                        <small class="text-muted">This action will be logged with your name and timestamp.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-check-circle me-2"></i>Confirm Emergency Override
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <style>
 .bg-gradient {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 </style>
+
+<script>
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
 @endsection

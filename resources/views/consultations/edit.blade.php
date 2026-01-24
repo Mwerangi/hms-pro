@@ -8,12 +8,70 @@
 @endsection
 
 @push('styles')
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
   .consultation-wrapper {
     display: grid;
     grid-template-columns: 300px 1fr;
     gap: 20px;
     margin-bottom: 30px;
+  }
+
+  /* Select2 Theme Customization */
+  .select2-container--default .select2-selection--single {
+    height: 38px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 4px;
+  }
+
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 28px;
+    color: #374151;
+  }
+
+  .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px;
+  }
+
+  .select2-dropdown {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+  }
+
+  .select2-container--default .select2-search--dropdown .select2-search__field {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 6px;
+  }
+
+  .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #6366f1;
+  }
+
+  [data-theme="dark"] .select2-container--default .select2-selection--single {
+    background-color: #1a202c;
+    border-color: #2d3748;
+  }
+
+  [data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #e2e8f0;
+  }
+
+  [data-theme="dark"] .select2-dropdown {
+    background-color: #1a202c;
+    border-color: #2d3748;
+  }
+
+  [data-theme="dark"] .select2-container--default .select2-search--dropdown .select2-search__field {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+
+  [data-theme="dark"] .select2-container--default .select2-results__option {
+    color: #e2e8f0;
   }
 
   .patient-sidebar {
@@ -517,13 +575,29 @@
           <div id="medicineItems">
             <div class="medicine-item" data-index="0">
               <div class="row">
-                <div class="col-md-3 mb-3">
-                  <label class="form-label">Medicine Name <span class="text-danger">*</span></label>
-                  <input type="text" name="items[0][medicine_name]" class="form-control" required placeholder="Paracetamol">
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">Select Medicine <span class="text-danger">*</span></label>
+                  <select name="items[0][medicine_id]" class="form-select medicine-select" required data-index="0">
+                    <option value="">-- Search or Select Medicine --</option>
+                    @foreach($medicines as $medicine)
+                      <option value="{{ $medicine->id }}" 
+                              data-price="{{ $medicine->unit_price }}"
+                              data-type="{{ $medicine->medicine_type }}"
+                              data-strength="{{ $medicine->strength }}">
+                        {{ $medicine->full_name }} - TSh {{ number_format($medicine->unit_price) }}
+                        @if($medicine->current_stock > 0)
+                          (Stock: {{ $medicine->current_stock }})
+                        @else
+                          <span class="text-danger">(Out of Stock)</span>
+                        @endif
+                      </option>
+                    @endforeach
+                  </select>
                 </div>
                 <div class="col-md-2 mb-3">
                   <label class="form-label">Dosage <span class="text-danger">*</span></label>
-                  <input type="text" name="items[0][dosage]" class="form-control" required placeholder="500mg">
+                  <input type="text" name="items[0][dosage]" class="form-control dosage-input" required placeholder="1 tablet" data-index="0">
+                  <small class="text-muted strength-hint" data-index="0"></small>
                 </div>
                 <div class="col-md-2 mb-3">
                   <label class="form-label">Frequency <span class="text-danger">*</span></label>
@@ -542,11 +616,15 @@
                 </div>
                 <div class="col-md-2 mb-3">
                   <label class="form-label">Quantity <span class="text-danger">*</span></label>
-                  <input type="number" name="items[0][quantity]" class="form-control" required min="1" placeholder="21">
+                  <input type="number" name="items[0][quantity]" class="form-control quantity-input" required min="1" placeholder="21" data-index="0">
                 </div>
-                <div class="col-md-12 mb-3">
+                <div class="col-md-10 mb-3">
                   <label class="form-label">Instructions</label>
                   <input type="text" name="items[0][instructions]" class="form-control" placeholder="After meals">
+                </div>
+                <div class="col-md-2 mb-3">
+                  <label class="form-label">Total Cost</label>
+                  <div class="form-control-plaintext fw-bold total-cost" data-index="0">TSh 0</div>
                 </div>
               </div>
             </div>
@@ -630,26 +708,40 @@
 @endsection
 
 @push('scripts')
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 let medicineIndex = 1;
+const medicinesData = @json($medicines);
 
 function addMedicineItem() {
   const container = document.getElementById('medicineItems');
   const newItem = document.createElement('div');
   newItem.className = 'medicine-item';
   newItem.setAttribute('data-index', medicineIndex);
+  
+  // Build medicine options
+  let medicineOptions = '<option value="">-- Search or Select Medicine --</option>';
+  medicinesData.forEach(med => {
+    const stockText = med.current_stock > 0 ? `(Stock: ${med.current_stock})` : '(Out of Stock)';
+    medicineOptions += `<option value="${med.id}" data-price="${med.unit_price}" data-type="${med.medicine_type}" data-strength="${med.strength}">${med.medicine_name} ${med.brand_name ? '('+med.brand_name+')' : ''} - ${med.strength} - TSh ${Number(med.unit_price).toLocaleString()} ${stockText}</option>`;
+  });
+  
   newItem.innerHTML = `
     <button type="button" class="remove-item" onclick="removeMedicineItem(this)">
       <i class="bi bi-x"></i>
     </button>
     <div class="row">
-      <div class="col-md-3 mb-3">
-        <label class="form-label">Medicine Name <span class="text-danger">*</span></label>
-        <input type="text" name="items[${medicineIndex}][medicine_name]" class="form-control" required>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Select Medicine <span class="text-danger">*</span></label>
+        <select name="items[${medicineIndex}][medicine_id]" class="form-select medicine-select" required data-index="${medicineIndex}">
+          ${medicineOptions}
+        </select>
       </div>
       <div class="col-md-2 mb-3">
         <label class="form-label">Dosage <span class="text-danger">*</span></label>
-        <input type="text" name="items[${medicineIndex}][dosage]" class="form-control" required>
+        <input type="text" name="items[${medicineIndex}][dosage]" class="form-control dosage-input" required placeholder="1 tablet" data-index="${medicineIndex}">
+        <small class="text-muted strength-hint" data-index="${medicineIndex}"></small>
       </div>
       <div class="col-md-2 mb-3">
         <label class="form-label">Frequency <span class="text-danger">*</span></label>
@@ -664,24 +756,97 @@ function addMedicineItem() {
       </div>
       <div class="col-md-2 mb-3">
         <label class="form-label">Duration <span class="text-danger">*</span></label>
-        <input type="text" name="items[${medicineIndex}][duration]" class="form-control" required>
+        <input type="text" name="items[${medicineIndex}][duration]" class="form-control" required placeholder="7 days">
       </div>
       <div class="col-md-2 mb-3">
         <label class="form-label">Quantity <span class="text-danger">*</span></label>
-        <input type="number" name="items[${medicineIndex}][quantity]" class="form-control" required min="1">
+        <input type="number" name="items[${medicineIndex}][quantity]" class="form-control quantity-input" required min="1" placeholder="21" data-index="${medicineIndex}">
       </div>
-      <div class="col-md-12 mb-3">
+      <div class="col-md-10 mb-3">
         <label class="form-label">Instructions</label>
-        <input type="text" name="items[${medicineIndex}][instructions]" class="form-control">
+        <input type="text" name="items[${medicineIndex}][instructions]" class="form-control" placeholder="After meals">
+      </div>
+      <div class="col-md-2 mb-3">
+        <label class="form-label">Total Cost</label>
+        <div class="form-control-plaintext fw-bold total-cost" data-index="${medicineIndex}">TSh 0</div>
       </div>
     </div>
   `;
   container.appendChild(newItem);
+  
+  // Add event listeners for new item
+  attachMedicineListeners(medicineIndex);
+  
   medicineIndex++;
 }
 
 function removeMedicineItem(button) {
   button.closest('.medicine-item').remove();
 }
+
+function attachMedicineListeners(index) {
+  const select = document.querySelector(`.medicine-select[data-index="${index}"]`);
+  const quantityInput = document.querySelector(`.quantity-input[data-index="${index}"]`);
+  const dosageInput = document.querySelector(`.dosage-input[data-index="${index}"]`);
+  const strengthHint = document.querySelector(`.strength-hint[data-index="${index}"]`);
+  const totalCost = document.querySelector(`.total-cost[data-index="${index}"]`);
+  
+  if (select) {
+    // Initialize Select2 for searchable dropdown
+    $(select).select2({
+      placeholder: '-- Search or Select Medicine --',
+      allowClear: true,
+      width: '100%',
+      dropdownParent: $('#prescriptionModal')
+    });
+    
+    // Update on medicine selection
+    $(select).on('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      const strength = selectedOption.getAttribute('data-strength');
+      const type = selectedOption.getAttribute('data-type');
+      
+      if (strength && strengthHint) {
+        strengthHint.textContent = `Available: ${strength} ${type}`;
+      }
+      
+      updateTotalCost(index);
+    });
+  }
+  
+  if (quantityInput) {
+    quantityInput.addEventListener('input', function() {
+      updateTotalCost(index);
+    });
+  }
+}
+
+function updateTotalCost(index) {
+  const select = document.querySelector(`.medicine-select[data-index="${index}"]`);
+  const quantityInput = document.querySelector(`.quantity-input[data-index="${index}"]`);
+  const totalCost = document.querySelector(`.total-cost[data-index="${index}"]`);
+  
+  if (select && quantityInput && totalCost) {
+    const selectedOption = select.options[select.selectedIndex];
+    const price = parseFloat(selectedOption.getAttribute('data-price') || 0);
+    const quantity = parseInt(quantityInput.value) || 0;
+    const total = price * quantity;
+    
+    totalCost.textContent = `TSh ${total.toLocaleString()}`;
+  }
+}
+
+// Initialize listeners for first item
+document.addEventListener('DOMContentLoaded', function() {
+  attachMedicineListeners(0);
+  
+  // Initialize Select2 for existing medicine dropdowns
+  $('.medicine-select').each(function() {
+    const index = $(this).data('index');
+    if (!$(this).hasClass('select2-hidden-accessible')) {
+      attachMedicineListeners(index);
+    }
+  });
+});
 </script>
 @endpush

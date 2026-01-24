@@ -41,6 +41,14 @@ class Appointment extends Model
         'assigned_by',
         'doctor_assigned_at',
         'chief_complaint_initial',
+        'is_billed',
+        'bill_id',
+        'is_locked',
+        'locked_by',
+        'locked_at',
+        'reopened_by',
+        'reopened_at',
+        'reopen_reason',
     ];
 
     protected $casts = [
@@ -52,6 +60,10 @@ class Appointment extends Model
         'cancelled_at' => 'datetime',
         'vitals_recorded_at' => 'datetime',
         'doctor_assigned_at' => 'datetime',
+        'is_billed' => 'boolean',
+        'is_locked' => 'boolean',
+        'locked_at' => 'datetime',
+        'reopened_at' => 'datetime',
     ];
 
     protected static function boot()
@@ -287,4 +299,66 @@ class Appointment extends Model
             'cancelled_at' => now(),
         ]);
     }
+
+    /**
+     * Lock appointment after billing (only accountant can close)
+     */
+    public function lockAfterBilling(Bill $bill, $userId)
+    {
+        $this->update([
+            'is_billed' => true,
+            'bill_id' => $bill->id,
+            'is_locked' => true,
+            'locked_by' => $userId,
+            'locked_at' => now(),
+        ]);
+    }
+
+    /**
+     * Reopen locked appointment (accountant/admin only)
+     */
+    public function reopen($userId, $reason)
+    {
+        $this->update([
+            'is_locked' => false,
+            'reopened_by' => $userId,
+            'reopened_at' => now(),
+            'reopen_reason' => $reason,
+        ]);
+    }
+
+    /**
+     * Check if appointment can be edited
+     */
+    public function canBeEdited()
+    {
+        return !$this->is_locked;
+    }
+
+    /**
+     * Check if appointment is ready for billing
+     */
+    public function isReadyForBilling()
+    {
+        return $this->status === 'completed' && !$this->is_billed;
+    }
+
+    /**
+     * Relationships for workflow
+     */
+    public function bill()
+    {
+        return $this->belongsTo(Bill::class);
+    }
+
+    public function lockedBy()
+    {
+        return $this->belongsTo(User::class, 'locked_by');
+    }
+
+    public function reopenedBy()
+    {
+        return $this->belongsTo(User::class, 'reopened_by');
+    }
 }
+

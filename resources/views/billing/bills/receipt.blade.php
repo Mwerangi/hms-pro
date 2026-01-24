@@ -200,22 +200,22 @@
           <small style="color: #666;">{{ $item->service_code }}</small>
         </td>
         <td class="text-right">{{ $item->quantity }}</td>
-        <td class="text-right">${{ number_format($item->unit_price, 2) }}</td>
+        <td class="text-right">TSh {{ number_format($item->unit_price, 2) }}</td>
         <td class="text-right">
           @if($item->discount_amount > 0)
-            ${{ number_format($item->discount_amount, 2) }}
+            TSh {{ number_format($item->discount_amount, 2) }}
           @else
             -
           @endif
         </td>
         <td class="text-right">
           @if($item->tax_amount > 0)
-            ${{ number_format($item->tax_amount, 2) }}
+            TSh {{ number_format($item->tax_amount, 2) }}
           @else
             -
           @endif
         </td>
-        <td class="text-right"><strong>${{ number_format($item->total_amount, 2) }}</strong></td>
+        <td class="text-right"><strong>TSh {{ number_format($item->total_amount, 2) }}</strong></td>
       </tr>
       @endforeach
     </tbody>
@@ -224,7 +224,7 @@
   <div class="total-section">
     <div class="total-row">
       <span>Subtotal:</span>
-      <span>${{ number_format($bill->sub_total, 2) }}</span>
+      <span>TSh {{ number_format($bill->sub_total, 2) }}</span>
     </div>
     @if($bill->discount_amount > 0)
     <div class="total-row">
@@ -234,24 +234,24 @@
           <br><small style="color: #666;">{{ $bill->discount_reason }}</small>
         @endif
       </span>
-      <span style="color: #dc2626;">-${{ number_format($bill->discount_amount, 2) }}</span>
+      <span style="color: #dc2626;">-TSh {{ number_format($bill->discount_amount, 2) }}</span>
     </div>
     @endif
     <div class="total-row">
       <span>Tax:</span>
-      <span>${{ number_format($bill->tax_amount, 2) }}</span>
+      <span>TSh {{ number_format($bill->tax_amount, 2) }}</span>
     </div>
     <div class="grand-total total-row">
       <span>TOTAL AMOUNT:</span>
-      <span>${{ number_format($bill->total_amount, 2) }}</span>
+      <span>TSh {{ number_format($bill->total_amount, 2) }}</span>
     </div>
     <div class="total-row" style="color: #059669;">
       <span>Amount Paid:</span>
-      <span><strong>${{ number_format($bill->paid_amount, 2) }}</strong></span>
+      <span><strong>TSh {{ number_format($bill->paid_amount, 2) }}</strong></span>
     </div>
     <div class="total-row" style="color: #dc2626;">
       <span>Balance Due:</span>
-      <span><strong>${{ number_format($bill->balance_amount, 2) }}</strong></span>
+      <span><strong>TSh {{ number_format($bill->balance_amount, 2) }}</strong></span>
     </div>
   </div>
 
@@ -283,7 +283,7 @@
           <td>{{ $payment->payment_date->format('M d, Y H:i') }}</td>
           <td>{{ strtoupper($payment->payment_method) }}</td>
           <td>{{ $payment->payment_reference ?? '-' }}</td>
-          <td class="text-right"><strong>${{ number_format($payment->amount, 2) }}</strong></td>
+          <td class="text-right"><strong>TSh {{ number_format($payment->amount, 2) }}</strong></td>
         </tr>
         @endforeach
       </tbody>

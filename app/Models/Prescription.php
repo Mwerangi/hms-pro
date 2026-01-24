@@ -23,12 +23,19 @@ class Prescription extends Model
         'status',
         'dispensed_by',
         'dispensed_at',
+        'payment_verified',
+        'bill_id',
+        'is_emergency',
+        'emergency_approved_by',
+        'emergency_reason',
     ];
 
     protected $casts = [
         'prescription_date' => 'date',
         'valid_until' => 'date',
         'dispensed_at' => 'datetime',
+        'payment_verified' => 'boolean',
+        'is_emergency' => 'boolean',
     ];
 
     protected static function boot()
@@ -105,4 +112,64 @@ class Prescription extends Model
     {
         return in_array($this->status, ['pending', 'partially-dispensed']);
     }
+
+    /**
+     * Check if payment is verified (50% minimum threshold)
+     */
+    public function hasPaymentVerification()
+    {
+        if ($this->is_emergency) {
+            return true; // Emergency prescriptions bypass payment check
+        }
+
+        if (!$this->bill_id) {
+            return false; // No bill created yet
+        }
+
+        $bill = $this->bill;
+        if (!$bill) {
+            return false;
+        }
+
+        // Check if at least 50% of bill is paid
+        $paymentPercentage = ($bill->paid_amount / $bill->total_amount) * 100;
+        return $paymentPercentage >= 50;
+    }
+
+    /**
+     * Verify payment before dispensing
+     */
+    public function verifyPayment(Bill $bill)
+    {
+        $this->update([
+            'payment_verified' => true,
+            'bill_id' => $bill->id,
+        ]);
+    }
+
+    /**
+     * Mark as emergency to bypass payment
+     */
+    public function markAsEmergency($userId, $reason)
+    {
+        $this->update([
+            'is_emergency' => true,
+            'emergency_approved_by' => $userId,
+            'emergency_reason' => $reason,
+        ]);
+    }
+
+    /**
+     * Relationships
+     */
+    public function bill()
+    {
+        return $this->belongsTo(Bill::class);
+    }
+
+    public function emergencyApprovedBy()
+    {
+        return $this->belongsTo(User::class, 'emergency_approved_by');
+    }
 }
+

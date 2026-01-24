@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Patient;
+use App\Models\PatientCharge;
+use App\Models\Service;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -132,6 +134,9 @@ class AppointmentController extends Controller
 
         $appointment = Appointment::create($validated);
 
+        // Auto-add consultation charge from service catalog
+        $this->addConsultationCharge($appointment);
+
         return redirect()->route('appointments.show', $appointment)
             ->with('success', 'Appointment booked successfully! Token Number: ' . $appointment->token_number);
     }
@@ -151,6 +156,10 @@ class AppointmentController extends Controller
      */
     public function edit(Appointment $appointment)
     {
+        if (!$appointment->canBeEdited()) {
+            return back()->with('error', 'This appointment is locked and cannot be edited. Please contact the accounting department to reopen it.');
+        }
+
         if (!$appointment->canBeRescheduled()) {
             return back()->with('error', 'This appointment cannot be rescheduled.');
         }
@@ -166,6 +175,10 @@ class AppointmentController extends Controller
      */
     public function update(Request $request, Appointment $appointment)
     {
+        if (!$appointment->canBeEdited()) {
+            return back()->with('error', 'This appointment is locked and cannot be updated. Please contact the accounting department to reopen it.');
+        }
+
         $validated = $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'doctor_id' => 'required|exists:users,id',
@@ -276,6 +289,29 @@ class AppointmentController extends Controller
     }
 
     /**
+     * Reopen a locked appointment (accountant only)
+     */
+    public function reopen(Request $request, Appointment $appointment)
+    {
+        // Only allow accountants and admins to reopen locked appointments
+        if (!in_array(auth()->user()->role, ['accountant', 'admin'])) {
+            return back()->with('error', 'Only accountants and administrators can reopen locked appointments.');
+        }
+
+        if (!$appointment->is_locked) {
+            return back()->with('error', 'This appointment is not locked.');
+        }
+
+        $request->validate([
+            'reopen_reason' => 'required|string|max:500',
+        ]);
+
+        $appointment->reopen(auth()->id(), $request->reopen_reason);
+
+        return back()->with('success', 'Appointment file reopened successfully. Reason: ' . $request->reopen_reason);
+    }
+
+    /**
      * Create walk-in appointment
      */
     public function createWalkIn(Request $request)
@@ -355,4 +391,35 @@ class AppointmentController extends Controller
 
         return view('appointments.doctor-dashboard', compact('appointments', 'stats', 'date', 'consultationsWithPendingResults'));
     }
+
+    /**
+     * Auto-add consultation charge when appointment is created
+     */
+    protected function addConsultationCharge(Appointment $appointment)
+    {
+        // Find consultation service from catalog based on appointment type
+        // You can customize this logic based on doctor specialty, appointment type, etc.
+        $serviceCode = 'CONS-001'; // Default: General Practitioner Consultation
+        
+        // If you want different consultation charges based on doctor specialty:
+        // $serviceCode = match($appointment->doctor->specialty ?? null) {
+        //     'Pediatrician' => 'CONS-003',
+        //     'Gynecologist' => 'CONS-004',
+        //     default => 'CONS-002', // Specialist Consultation
+        // };
+        
+        $service = Service::where('service_code', $serviceCode)
+            ->where('is_active', true)
+            ->first();
+        
+        if ($service) {
+            PatientCharge::createFromService(
+                $service,
+                $appointment->patient,
+                Appointment::class,
+                $appointment->id
+            );
+        }
+    }
 }
+

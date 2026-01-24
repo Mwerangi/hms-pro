@@ -366,13 +366,55 @@
     .hms-main {
       margin-left: 240px;
       margin-top: 60px;
-      padding: 10px 20px;
+      padding: 10px 20px 0;
       transition: all 0.3s ease;
       min-height: calc(100vh - 60px);
     }
 
     .hms-main.expanded {
       margin-left: 70px;
+    }
+
+    /* Footer */
+    .hms-footer {
+      margin-top: 60px;
+      padding: 24px 0;
+      border-top: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .footer-left {
+      text-align: left;
+    }
+
+    .footer-center {
+      text-align: center;
+    }
+
+    .footer-right {
+      text-align: right;
+    }
+
+    .footer-text {
+      color: #9ca3af;
+    }
+
+    .footer-link {
+      color: #9ca3af;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover {
+      color: #667eea;
     }
 
     /* Logout Form */
@@ -506,6 +548,28 @@
         </li>
       </ul>
 
+      <div class="nav-section-title">Accounting</div>
+      <ul class="list-unstyled">
+        <li class="nav-item">
+          <a href="{{ route('accounting.dashboard') }}" class="nav-link {{ request()->routeIs('accounting.*') ? 'active' : '' }}">
+            <i class="bi bi-speedometer2"></i>
+            <span>Accounting Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('services.index') }}" class="nav-link {{ request()->routeIs('services.*') ? 'active' : '' }}">
+            <i class="bi bi-list-check"></i>
+            <span>Service Catalog</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('bills.index') }}" class="nav-link {{ request()->routeIs('bills.*') ? 'active' : '' }}">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Bills</span>
+          </a>
+        </li>
+      </ul>
+
       <div class="nav-section-title">System</div>
       <ul class="list-unstyled">
         <li class="nav-item">
@@ -536,6 +600,21 @@
   <!-- Main Content -->
   <main class="hms-main" id="mainContent">
     @yield('content')
+    
+    <!-- Footer -->
+    <footer class="hms-footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <span class="footer-text">HMS Pro</span>
+        </div>
+        <div class="footer-center">
+          <span class="footer-text">Made with <i class="bi bi-heart-fill" style="color: #ef4444;"></i> by <a href="https://tynex.co.tz" target="_blank" rel="noopener" class="footer-link">Tynex</a></span>
+        </div>
+        <div class="footer-right">
+          <span class="footer-text">Version 1.0.0</span>
+        </div>
+      </div>
+    </footer>
   </main>
 
   <!-- Toast Notification Container -->

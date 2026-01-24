@@ -117,4 +117,29 @@ class Patient extends Model
             ->whereIn('status', ['scheduled', 'waiting', 'in_consultation'])
             ->latest('appointment_time');
     }
+
+    /**
+     * Get all pending charges for the patient
+     */
+    public function charges()
+    {
+        return $this->hasMany(PatientCharge::class);
+    }
+
+    /**
+     * Get pending charges
+     */
+    public function pendingCharges()
+    {
+        return $this->hasMany(PatientCharge::class)->where('status', 'pending');
+    }
+
+    /**
+     * Get all bills for the patient
+     */
+    public function bills()
+    {
+        return $this->hasMany(Bill::class);
+    }
 }
+
