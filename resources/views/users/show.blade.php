@@ -360,6 +360,38 @@
       <div class="info-label">User ID</div>
       <div class="info-value">#{{ $user->id }}</div>
     </div>
+    @if($user->employee_id)
+    <div class="info-item">
+      <div class="info-label">Employee ID</div>
+      <div class="info-value">{{ $user->employee_id }}</div>
+    </div>
+    @endif
+    <div class="info-item">
+      <div class="info-label">Assigned Role</div>
+      <div class="info-value">
+        <span class="badge role-{{ $roleName }}">
+          {{ ucwords(str_replace('-', ' ', $roleName)) }}
+        </span>
+      </div>
+    </div>
+    @if($user->branch)
+    <div class="info-item">
+      <div class="info-label">Branch</div>
+      <div class="info-value">{{ $user->branch->name }}</div>
+    </div>
+    @endif
+    @if($user->department)
+    <div class="info-item">
+      <div class="info-label">Department</div>
+      <div class="info-value">{{ $user->department->name }}</div>
+    </div>
+    @endif
+    @if($user->specialization)
+    <div class="info-item">
+      <div class="info-label">Specialization</div>
+      <div class="info-value">{{ $user->specialization }}</div>
+    </div>
+    @endif
     <div class="info-item">
       <div class="info-label">Status</div>
       <div class="info-value">
@@ -368,14 +400,6 @@
         @else
         <span class="badge bg-secondary">Inactive</span>
         @endif
-      </div>
-    </div>
-    <div class="info-item">
-      <div class="info-label">Assigned Role</div>
-      <div class="info-value">
-        <span class="badge role-{{ $roleName }}">
-          {{ ucwords(str_replace('-', ' ', $roleName)) }}
-        </span>
       </div>
     </div>
   </div>
@@ -396,50 +420,80 @@
       <div class="info-value">{{ $user->updated_at->format('M d, Y') }}</div>
       <small class="text-muted" style="font-size: 11px;">{{ $user->updated_at->diffForHumans() }}</small>
     </div>
+    <div class="info-item">
+      <div class="info-label">Last Login</div>
+      <div class="info-value">
+        @if($user->last_login_at)
+          {{ $user->last_login_at->format('M d, Y') }}
+          <small class="text-muted d-block" style="font-size: 11px;">{{ $user->last_login_at->diffForHumans() }}</small>
+        @else
+          <span class="text-muted">Never</span>
+        @endif
+      </div>
+    </div>
   </div>
+
+  <!-- Professional Information -->
+  @if($user->license_number || $user->gender || $user->date_of_joining)
+  <div class="info-card">
+    <div class="info-card-title">
+      <i class="bi bi-briefcase"></i>
+      Additional Information
+    </div>
+    @if($user->license_number)
+    <div class="info-item">
+      <div class="info-label">License Number</div>
+      <div class="info-value">{{ $user->license_number }}</div>
+    </div>
+    @endif
+    @if($user->gender)
+    <div class="info-item">
+      <div class="info-label">Gender</div>
+      <div class="info-value">{{ ucfirst($user->gender) }}</div>
+    </div>
+    @endif
+    @if($user->date_of_joining)
+    <div class="info-item">
+      <div class="info-label">Date of Joining</div>
+      <div class="info-value">{{ $user->date_of_joining->format('M d, Y') }}</div>
+    </div>
+    @endif
+  </div>
+  @endif
 </div>
 
-<!-- Role & Permissions -->
-<div class="wide-card">
+<!-- Permissions Section -->
+<div class="wide-card mt-3">
   <div class="wide-card-title">
     <i class="bi bi-shield-check"></i>
-    Role & Permissions
+    Assigned Permissions (via {{ ucwords(str_replace('-', ' ', $roleName)) }} Role)
   </div>
-  <div class="role-description-box">
-    <p>
-      @switch($roleName)
-        @case('super-admin')
-          <strong>Super Administrator:</strong> Full system access with all administrative privileges and controls.
-          @break
-        @case('admin')
-          <strong>Administrator:</strong> Administrative privileges for managing hospital operations and staff.
-          @break
-        @case('doctor')
-          <strong>Doctor:</strong> Medical staff with access to patient care, prescriptions, and medical records.
-          @break
-        @case('nurse')
-          <strong>Nurse:</strong> Nursing staff with patient monitoring and care coordination access.
-          @break
-        @case('receptionist')
-          <strong>Receptionist:</strong> Front desk operations including patient registration and appointment scheduling.
-          @break
-        @case('pharmacist')
-          <strong>Pharmacist:</strong> Pharmacy management including medication dispensing and inventory.
-          @break
-        @case('lab-technician')
-          <strong>Lab Technician:</strong> Laboratory operations including test processing and result reporting.
-          @break
-        @case('radiologist')
-          <strong>Radiologist:</strong> Radiology and medical imaging services management.
-          @break
-        @case('accountant')
-          <strong>Accountant:</strong> Financial management including billing, invoicing, and financial reporting.
-          @break
-        @default
-          <strong>User:</strong> Standard user access.
-      @endswitch
-    </p>
+  
+  @if($rolePermissions->count() > 0)
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+    @foreach($rolePermissions as $module => $permissions)
+    <div style="background: #f9fafb; border-radius: 8px; padding: 14px; border: 1px solid #e5e7eb;">
+      <h6 style="font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 10px; text-transform: capitalize;">
+        <i class="bi bi-folder2 me-1" style="color: #667eea;"></i>
+        {{ ucwords(str_replace(['-', '_'], ' ', $module)) }}
+      </h6>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        @foreach($permissions as $permission)
+        <span style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 4px 10px; font-size: 11px; color: #6b7280; font-weight: 500;">
+          <i class="bi bi-check-circle-fill me-1" style="color: #10b981; font-size: 10px;"></i>
+          {{ str_replace([$module.'.', '-'.$module], '', $permission->name) }}
+        </span>
+        @endforeach
+      </div>
+    </div>
+    @endforeach
   </div>
+  @else
+  <div style="text-align: center; padding: 32px; color: #9ca3af;">
+    <i class="bi bi-shield-x" style="font-size: 40px; color: #d1d5db; margin-bottom: 8px;"></i>
+    <p style="font-size: 13px; margin: 0;">No permissions assigned to this role</p>
+  </div>
+  @endif
 </div>
 
 @if($user->id !== auth()->id())

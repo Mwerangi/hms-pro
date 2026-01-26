@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
         // Seed service catalog
         $this->call([
             ServiceSeeder::class,
+            BranchSeeder::class,
+            DepartmentSeeder::class,
         ]);
     }
 }

@@ -20,6 +20,9 @@
   <!-- Vendor CSS Files -->
   <link href="{{ asset('theme/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('theme/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  
+  <!-- NProgress Loading Bar -->
+  <link rel="stylesheet" href="https://unpkg.com/nprogress@0.2.0/nprogress.css">
 
   <!-- Main CSS File -->
   <link href="{{ asset('theme/assets/css/main.css') }}" rel="stylesheet">
@@ -138,6 +141,94 @@
       background: rgba(102, 126, 234, 0.1);
       color: var(--hms-purple);
       transform: rotate(15deg);
+    }
+
+    /* ===== Loading Styles ===== */
+    /* NProgress Customization */
+    #nprogress .bar {
+      background: var(--hms-purple) !important;
+      height: 3px !important;
+      z-index: 10000 !important;
+    }
+
+    #nprogress .peg {
+      box-shadow: 0 0 10px var(--hms-purple), 0 0 5px var(--hms-purple) !important;
+    }
+
+    #nprogress .spinner-icon {
+      border-top-color: var(--hms-purple) !important;
+      border-left-color: var(--hms-purple) !important;
+    }
+
+    /* Button Loading States */
+    .btn-loading {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.65;
+    }
+
+    .btn-loading .btn-text {
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    .btn-loading::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spinner-border 0.75s linear infinite;
+    }
+
+    @keyframes spinner-border {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Full Page Loader (Optional) */
+    .page-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease;
+    }
+
+    [data-theme="dark"] .page-loader {
+      background: rgba(26, 32, 44, 0.9);
+    }
+
+    .page-loader.active {
+      display: flex;
+    }
+
+    .loader-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #e5e7eb;
+      border-top-color: var(--hms-purple);
+      border-radius: 50%;
+      animation: spinner-border 1s linear infinite;
+    }
+
+    [data-theme="dark"] .loader-spinner {
+      border-color: #4a5568;
+      border-top-color: var(--hms-purple);
     }
 
     /* Top Header */
@@ -425,6 +516,10 @@
 </head>
 
 <body>
+  <!-- Optional Full Page Loader -->
+  <div id="pageLoader" class="page-loader">
+    <div class="loader-spinner"></div>
+  </div>
 
   <!-- Top Header -->
   <header class="hms-header">
@@ -492,98 +587,135 @@
         </li>
       </ul>
 
+      @if(auth()->user()->can('patients.view') || auth()->user()->canAny(['appointments.view-all', 'appointments.view-own']))
       <div class="nav-section-title">Patient Management</div>
       <ul class="list-unstyled">
+        @can('patients.view')
         <li class="nav-item">
           <a href="{{ route('patients.index') }}" class="nav-link {{ request()->routeIs('patients.*') ? 'active' : '' }}">
             <i class="bi bi-people"></i>
             <span>Patients</span>
           </a>
         </li>
+        @endcan
+        @canany(['appointments.view-all', 'appointments.view-own'])
         <li class="nav-item">
           <a href="{{ route('appointments.index') }}" class="nav-link {{ request()->routeIs('appointments.*') ? 'active' : '' }}">
             <i class="bi bi-calendar-check"></i>
             <span>Appointments</span>
           </a>
         </li>
+        @endcanany
       </ul>
+      @endif
 
+      @if(auth()->user()->canAny(['nursing.view-dashboard', 'consultations.view-all', 'consultations.view-own', 'ipd.view-dashboard', 'lab.view-dashboard', 'radiology.view-dashboard', 'pharmacy.view-dashboard']))
       <div class="nav-section-title">Clinical</div>
       <ul class="list-unstyled">
+        @can('nursing.view-dashboard')
         <li class="nav-item">
           <a href="{{ route('nursing.dashboard') }}" class="nav-link {{ request()->routeIs('nursing.*') ? 'active' : '' }}">
             <i class="bi bi-heart-pulse"></i>
             <span>Nursing Station</span>
           </a>
         </li>
+        @endcan
+        @canany(['consultations.view-all', 'consultations.view-own'])
         <li class="nav-item">
           <a href="{{ route('consultations.index') }}" class="nav-link {{ request()->routeIs('consultations.*') ? 'active' : '' }}">
             <i class="bi bi-file-medical"></i>
             <span>Consultations</span>
           </a>
         </li>
+        @endcanany
+        @can('ipd.view-dashboard')
         <li class="nav-item">
           <a href="{{ route('ipd.dashboard') }}" class="nav-link {{ request()->routeIs('ipd.*') || request()->routeIs('wards.*') || request()->routeIs('beds.*') || request()->routeIs('admissions.*') ? 'active' : '' }}">
             <i class="bi bi-hospital"></i>
             <span>IPD / Beds</span>
           </a>
         </li>
+        @endcan
+        @can('lab.view-dashboard')
         <li class="nav-item">
           <a href="{{ route('lab.dashboard') }}" class="nav-link {{ request()->routeIs('lab.*') && !request()->routeIs('radiology.*') ? 'active' : '' }}">
             <i class="bi bi-clipboard-pulse"></i>
             <span>Laboratory</span>
           </a>
         </li>
+        @endcan
+        @can('radiology.view-dashboard')
         <li class="nav-item">
           <a href="{{ route('radiology.dashboard') }}" class="nav-link {{ request()->routeIs('radiology.*') ? 'active' : '' }}">
             <i class="bi bi-camera"></i>
             <span>Radiology</span>
           </a>
         </li>
+        @endcan
+        @can('pharmacy.view-dashboard')
         <li class="nav-item">
           <a href="{{ route('pharmacy.dashboard') }}" class="nav-link {{ request()->routeIs('pharmacy.*') ? 'active' : '' }}">
             <i class="bi bi-capsule"></i>
             <span>Pharmacy</span>
           </a>
         </li>
+        @endcan
       </ul>
+      @endif
 
+      @if(auth()->user()->canAny(['billing.view-dashboard', 'billing.view-services', 'billing.view-bills']))
       <div class="nav-section-title">Accounting</div>
       <ul class="list-unstyled">
+        @can('billing.view-dashboard')
         <li class="nav-item">
           <a href="{{ route('accounting.dashboard') }}" class="nav-link {{ request()->routeIs('accounting.*') ? 'active' : '' }}">
             <i class="bi bi-speedometer2"></i>
             <span>Accounting Dashboard</span>
           </a>
         </li>
+        @endcan
+        @can('billing.view-services')
         <li class="nav-item">
           <a href="{{ route('services.index') }}" class="nav-link {{ request()->routeIs('services.*') ? 'active' : '' }}">
             <i class="bi bi-list-check"></i>
             <span>Service Catalog</span>
           </a>
         </li>
+        @endcan
+        @can('billing.view-bills')
         <li class="nav-item">
           <a href="{{ route('bills.index') }}" class="nav-link {{ request()->routeIs('bills.*') ? 'active' : '' }}">
             <i class="bi bi-file-earmark-text"></i>
             <span>Bills</span>
           </a>
         </li>
+        @endcan
       </ul>
+      @endif
 
+      @if(auth()->user()->canAny(['users.view', 'settings.view']))
       <div class="nav-section-title">System</div>
       <ul class="list-unstyled">
+        @can('users.view')
         <li class="nav-item">
           <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
             <i class="bi bi-people"></i>
             <span>User Management</span>
           </a>
         </li>
+        @endcan
+        @can('settings.view')
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="{{ route('settings.index') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
             <i class="bi bi-gear"></i>
             <span>Settings</span>
           </a>
         </li>
+        @endcan
+      </ul>
+      @endif
+
+      <ul class="list-unstyled">
         <li class="nav-item">
           <form action="{{ route('logout') }}" method="POST" class="logout-form">
             @csrf
@@ -622,6 +754,9 @@
 
   <!-- Vendor JS Files -->
   <script src="{{ asset('theme/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  
+  <!-- NProgress Loading Bar -->
+  <script src="https://unpkg.com/nprogress@0.2.0/nprogress.js"></script>
 
   <script>
     // Toast Notification System
@@ -846,6 +981,127 @@
         icon.className = 'bi bi-moon-stars-fill';
       }
     });
+  </script>
+
+  <script>
+    // ===== Loading & Progress System =====
+    
+    // Configure NProgress
+    NProgress.configure({ 
+      showSpinner: false,
+      trickleSpeed: 200,
+      minimum: 0.08,
+      easing: 'ease',
+      speed: 500
+    });
+
+    // Show loading bar on page navigation
+    document.addEventListener('DOMContentLoaded', function() {
+      // Start NProgress on any link click
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && !link.hasAttribute('data-bs-toggle') && 
+            !link.hasAttribute('download') && !link.getAttribute('href').startsWith('#') &&
+            link.target !== '_blank') {
+          NProgress.start();
+        }
+      });
+
+      // Complete NProgress when page loads
+      window.addEventListener('load', function() {
+        NProgress.done();
+      });
+
+      // Handle browser back/forward buttons
+      window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+          NProgress.done();
+        }
+      });
+    });
+
+    // Form submission loading handler
+    function handleFormSubmit(form, submitButton) {
+      if (!submitButton) {
+        submitButton = form.querySelector('button[type="submit"]');
+      }
+      
+      if (submitButton && !submitButton.classList.contains('btn-loading')) {
+        // Wrap button text if not already wrapped
+        if (!submitButton.querySelector('.btn-text')) {
+          const text = submitButton.innerHTML;
+          submitButton.innerHTML = `<span class="btn-text">${text}</span>`;
+        }
+        
+        // Add loading class
+        submitButton.classList.add('btn-loading');
+        submitButton.disabled = true;
+        
+        // Show NProgress
+        NProgress.start();
+      }
+    }
+
+    // Auto-attach to all forms with class 'form-loading'
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('form.form-loading').forEach(form => {
+        form.addEventListener('submit', function(e) {
+          const submitButton = this.querySelector('button[type="submit"]');
+          handleFormSubmit(this, submitButton);
+        });
+      });
+    });
+
+    // Manual button loading control
+    function showButtonLoading(button) {
+      if (typeof button === 'string') {
+        button = document.querySelector(button);
+      }
+      
+      if (button && !button.classList.contains('btn-loading')) {
+        if (!button.querySelector('.btn-text')) {
+          const text = button.innerHTML;
+          button.innerHTML = `<span class="btn-text">${text}</span>`;
+        }
+        button.classList.add('btn-loading');
+        button.disabled = true;
+      }
+    }
+
+    function hideButtonLoading(button) {
+      if (typeof button === 'string') {
+        button = document.querySelector(button);
+      }
+      
+      if (button) {
+        button.classList.remove('btn-loading');
+        button.disabled = false;
+      }
+    }
+
+    // Full page loader control
+    function showPageLoader() {
+      const loader = document.getElementById('pageLoader');
+      if (loader) {
+        loader.classList.add('active');
+      }
+      NProgress.start();
+    }
+
+    function hidePageLoader() {
+      const loader = document.getElementById('pageLoader');
+      if (loader) {
+        loader.classList.remove('active');
+      }
+      NProgress.done();
+    }
+
+    // Expose functions globally
+    window.showButtonLoading = showButtonLoading;
+    window.hideButtonLoading = hideButtonLoading;
+    window.showPageLoader = showPageLoader;
+    window.hidePageLoader = hidePageLoader;
+    window.handleFormSubmit = handleFormSubmit;
   </script>
 
   @stack('scripts')

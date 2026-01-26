@@ -17,28 +17,30 @@ class BillController extends Controller
         $query = Bill::with(['patient', 'billedBy']);
 
         // Filter by payment status
-        if ($request->has('payment_status')) {
+        if ($request->filled('payment_status')) {
             $query->where('payment_status', $request->payment_status);
         }
 
         // Filter by bill type
-        if ($request->has('bill_type')) {
+        if ($request->filled('bill_type')) {
             $query->where('bill_type', $request->bill_type);
         }
 
         // Search by patient name or bill number
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('bill_number', 'like', "%{$search}%")
                   ->orWhereHas('patient', function($pq) use ($search) {
                       $pq->where('first_name', 'like', "%{$search}%")
-                         ->orWhere('last_name', 'like', "%{$search}%");
+                         ->orWhere('last_name', 'like', "%{$search}%")
+                         ->orWhere('patient_id', 'like', "%{$search}%")
+                         ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$search}%"]);
                   });
             });
         }
 
-        $bills = $query->latest()->paginate(20);
+        $bills = $query->latest()->paginate(20)->appends($request->all());
         
         return view('billing.bills.index', compact('bills'));
     }

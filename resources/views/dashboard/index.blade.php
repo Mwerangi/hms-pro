@@ -25,54 +25,54 @@
   /* Stats Grid */
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-    margin-bottom: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
   }
 
   .stat-card {
     background: white;
     border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 24px;
+    border-radius: 8px;
+    padding: 16px;
     transition: all 0.2s ease;
   }
 
   .stat-card:hover {
     border-color: #667eea;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
   }
 
   .stat-icon {
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
     background: #f3f4f6;
-    border-radius: 10px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 18px;
     color: #667eea;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .stat-label {
-    font-size: 13px;
+    font-size: 12px;
     color: #6b7280;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: 500;
   }
 
   .stat-value {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 700;
     color: #111827;
     line-height: 1;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .stat-meta {
-    font-size: 13px;
+    font-size: 12px;
     color: #9ca3af;
     display: flex;
     align-items: center;
@@ -96,26 +96,26 @@
   .section-card {
     background: white;
     border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 24px;
+    border-radius: 8px;
+    padding: 18px;
   }
 
   .section-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
     border-bottom: 1px solid #f3f4f6;
   }
 
   .section-header i {
-    font-size: 20px;
+    font-size: 18px;
     color: #667eea;
   }
 
   .section-header h3 {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     color: #111827;
     margin: 0;
@@ -125,9 +125,9 @@
   .count {
     background: #f3f4f6;
     color: #6b7280;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 13px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 12px;
     font-weight: 600;
   }
 
@@ -358,6 +358,284 @@
     background: #10b981;
     border-radius: 50%;
   }
+
+  /* Widget-Specific Styles */
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title i {
+    color: #667eea;
+    font-size: 16px;
+  }
+
+  .quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+  }
+
+  .quick-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #374151;
+    transition: all 0.2s ease;
+    font-size: 13px;
+  }
+
+  .quick-action-btn:hover {
+    border-color: #667eea;
+    background: #f9fafb;
+    color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.15);
+  }
+
+  .quick-action-btn i {
+    font-size: 24px;
+    color: #667eea;
+  }
+
+  .quick-action-btn span {
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+  }
+
+  .task-item i {
+    font-size: 18px;
+  }
+
+  .task-item.pending i {
+    color: #9ca3af;
+  }
+
+  .schedule-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .schedule-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .schedule-label {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  .schedule-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .schedule-bar {
+    width: 100%;
+    height: 6px;
+    background: #f3f4f6;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .schedule-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .department-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+  }
+
+  .department-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 10px;
+  }
+
+  .department-item i {
+    font-size: 28px;
+    color: #667eea;
+  }
+
+  .department-name {
+    font-weight: 600;
+    color: #111827;
+    font-size: 14px;
+  }
+
+  .department-stat {
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  .activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .activity-item {
+    display: flex;
+    gap: 12px;
+  }
+
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .activity-content {
+    flex: 1;
+  }
+
+  .activity-text {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+  }
+
+  .activity-time {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+
+  .priority-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .priority-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+  }
+
+  .priority-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .priority-item.urgent .priority-badge {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .priority-item.high .priority-badge {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .priority-item.normal .priority-badge {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .priority-text {
+    font-size: 13px;
+    color: #374151;
+  }
+
+  .alert-card {
+    border-left: 3px solid #f59e0b;
+  }
+
+  .alert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .alert-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: #fef3c7;
+    border-radius: 8px;
+  }
+
+  .alert-icon {
+    width: 36px;
+    height: 36px;
+    background: #fbbf24;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .alert-content {
+    flex: 1;
+  }
+
+  .alert-title {
+    font-weight: 600;
+    color: #78350f;
+    font-size: 14px;
+  }
+
+  .alert-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+    font-size: 12px;
+  }
 </style>
 @endpush
 
@@ -368,7 +646,33 @@
   <div class="page-subtitle">Welcome back, {{ auth()->user()->name }} • {{ now()->format('l, F d, Y') }}</div>
 </div>
 
-<!-- Stats Grid -->
+<!-- Role-Specific Widgets -->
+@role('Doctor')
+  @include('dashboard.widgets.doctor')
+@endrole
+
+@role('Nurse')
+  @include('dashboard.widgets.nurse')
+@endrole
+
+@role('Pharmacist')
+  @include('dashboard.widgets.pharmacist')
+@endrole
+
+@role('Receptionist')
+  @include('dashboard.widgets.receptionist')
+@endrole
+
+@role('Lab Technician')
+  @include('dashboard.widgets.lab-technician')
+@endrole
+
+@hasanyrole('Admin|Super Admin')
+  @include('dashboard.widgets.admin')
+@endhasanyrole
+
+<!-- General Stats (Shown to all users) -->
+@unlessrole('Doctor|Nurse|Pharmacist|Receptionist|Lab Technician|Admin|Super Admin')
 <div class="stats-grid">
   <div class="stat-card">
     <div class="stat-icon">
@@ -418,6 +722,7 @@
     </div>
   </div>
 </div>
+@endunlessrole
 
 <!-- Alerts/Reminders Section -->
 @if($stuckAppointments->count() > 0 || $missedAppointments->count() > 0)

@@ -85,9 +85,19 @@
   }
 
   .filter-row {
-    display: grid;
-    grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+    display: flex;
     gap: 12px;
+    align-items: center;
+  }
+
+  .filter-row input[type="text"],
+  .filter-row select {
+    flex: 1;
+  }
+
+  .filter-row button,
+  .filter-row a.btn-clear {
+    flex-shrink: 0;
   }
 
   .filter-input {
@@ -206,6 +216,26 @@
     color: white;
   }
 
+  .btn-clear {
+    background: white;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-clear:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    color: #374151;
+  }
+
   .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -295,6 +325,11 @@
       <button type="submit" class="btn-primary-custom">
         <i class="bi bi-funnel me-1"></i>Filter
       </button>
+      @if(request()->hasAny(['search', 'bill_type', 'payment_status']))
+      <a href="{{ route('bills.index') }}" class="btn-clear">
+        <i class="bi bi-x-circle me-1"></i>Clear
+      </a>
+      @endif
     </div>
   </form>
 </div>

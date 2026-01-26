@@ -147,7 +147,7 @@
   </a>
 </div>
 
-<form action="{{ route('patients.update', $patient) }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('patients.update', $patient) }}" method="POST" enctype="multipart/form-data" class="form-loading">
   @csrf
   @method('PUT')
   

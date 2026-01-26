@@ -18,6 +18,16 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         $query = Appointment::with(['patient', 'doctor']);
+        $user = $request->user();
+
+        // If user is a doctor, apply doctor-specific filtering logic
+        if ($user->hasRole('Doctor')) {
+            // Show only appointments assigned to this doctor OR unassigned appointments
+            $query->where(function($q) use ($user) {
+                $q->where('doctor_id', $user->id) // Assigned to this doctor
+                  ->orWhereNull('doctor_id'); // OR unassigned (available to all doctors)
+            });
+        }
 
         // Search functionality
         if ($request->filled('search')) {
@@ -41,8 +51,8 @@ class AppointmentController extends Controller
             $query->whereDate('appointment_date', today());
         }
 
-        // Doctor filter
-        if ($request->filled('doctor_id')) {
+        // Doctor filter (for admin/receptionist views)
+        if ($request->filled('doctor_id') && !$user->hasRole('Doctor')) {
             $query->where('doctor_id', $request->doctor_id);
         }
 
@@ -61,14 +71,21 @@ class AppointmentController extends Controller
         // Get doctors for filter dropdown
         $doctors = User::role('Doctor')->get();
 
-        // Statistics
+        // Statistics - adjusted for doctor role
+        $statsQuery = Appointment::whereDate('appointment_date', today());
+        if ($user->hasRole('Doctor')) {
+            $statsQuery->where(function($q) use ($user) {
+                $q->where('doctor_id', $user->id)->orWhereNull('doctor_id');
+            });
+        }
+        
         $stats = [
-            'today_total' => Appointment::whereDate('appointment_date', today())->count(),
-            'waiting' => Appointment::whereDate('appointment_date', today())->where('status', 'waiting')->count(),
-            'in_consultation' => Appointment::whereDate('appointment_date', today())->where('status', 'in-consultation')->count(),
-            'completed' => Appointment::whereDate('appointment_date', today())->where('status', 'completed')->count(),
-            'cancelled' => Appointment::whereDate('appointment_date', today())->where('status', 'cancelled')->count(),
-            'scheduled' => Appointment::whereDate('appointment_date', today())->where('status', 'scheduled')->count(),
+            'today_total' => (clone $statsQuery)->count(),
+            'waiting' => (clone $statsQuery)->where('status', 'waiting')->count(),
+            'in_consultation' => (clone $statsQuery)->where('status', 'in-consultation')->count(),
+            'completed' => (clone $statsQuery)->where('status', 'completed')->count(),
+            'cancelled' => (clone $statsQuery)->where('status', 'cancelled')->count(),
+            'scheduled' => (clone $statsQuery)->where('status', 'scheduled')->count(),
         ];
 
         return view('appointments.index', compact('appointments', 'doctors', 'stats'));
@@ -146,6 +163,13 @@ class AppointmentController extends Controller
      */
     public function show(Appointment $appointment)
     {
+        $user = auth()->user();
+        
+        // If user is a doctor, ensure they can only view appointments assigned to them or unassigned
+        if ($user->hasRole('Doctor') && $appointment->doctor_id && $appointment->doctor_id !== $user->id) {
+            abort(403, 'You are not authorized to view this appointment.');
+        }
+
         $appointment->load(['patient', 'doctor', 'consultation']);
         
         return view('appointments.show', compact('appointment'));
@@ -156,6 +180,13 @@ class AppointmentController extends Controller
      */
     public function edit(Appointment $appointment)
     {
+        $user = auth()->user();
+        
+        // If user is a doctor, ensure they can only edit appointments assigned to them or unassigned
+        if ($user->hasRole('Doctor') && $appointment->doctor_id && $appointment->doctor_id !== $user->id) {
+            abort(403, 'You are not authorized to edit this appointment.');
+        }
+
         if (!$appointment->canBeEdited()) {
             return back()->with('error', 'This appointment is locked and cannot be edited. Please contact the accounting department to reopen it.');
         }
@@ -175,6 +206,13 @@ class AppointmentController extends Controller
      */
     public function update(Request $request, Appointment $appointment)
     {
+        $user = auth()->user();
+        
+        // If user is a doctor, ensure they can only update appointments assigned to them or unassigned
+        if ($user->hasRole('Doctor') && $appointment->doctor_id && $appointment->doctor_id !== $user->id) {
+            abort(403, 'You are not authorized to update this appointment.');
+        }
+
         if (!$appointment->canBeEdited()) {
             return back()->with('error', 'This appointment is locked and cannot be updated. Please contact the accounting department to reopen it.');
         }
@@ -249,6 +287,22 @@ class AppointmentController extends Controller
     {
         if (!in_array($appointment->status, ['scheduled', 'waiting'])) {
             return back()->with('error', 'Cannot start consultation for this appointment.');
+        }
+
+        $user = auth()->user();
+
+        // If appointment is unassigned, assign it to the current doctor
+        if (!$appointment->doctor_id && $user->hasRole('Doctor')) {
+            $appointment->update([
+                'doctor_id' => $user->id,
+                'doctor_assigned_at' => now(),
+                'assigned_by' => $user->id,
+            ]);
+        }
+
+        // Verify the doctor is authorized to start this consultation
+        if ($user->hasRole('Doctor') && $appointment->doctor_id !== $user->id) {
+            return back()->with('error', 'You are not authorized to start this consultation. This appointment is assigned to another doctor.');
         }
 
         $appointment->startConsultation();
@@ -356,8 +410,12 @@ class AppointmentController extends Controller
         $doctorId = $request->user()->id;
         $date = $request->filled('date') ? Carbon::parse($request->date) : today();
 
+        // Show appointments assigned to this doctor OR unassigned appointments
         $appointments = Appointment::with(['patient', 'consultation'])
-            ->where('doctor_id', $doctorId)
+            ->where(function($q) use ($doctorId) {
+                $q->where('doctor_id', $doctorId) // Assigned to this doctor
+                  ->orWhereNull('doctor_id'); // OR unassigned
+            })
             ->whereDate('appointment_date', $date)
             ->orderBy('priority_order', 'asc') // Emergency (1) → Scheduled (2) → Walk-in (3)
             ->orderBy('checked_in_at', 'asc') // FIFO within same priority

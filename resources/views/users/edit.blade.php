@@ -168,6 +168,115 @@
           </div>
         </div>
 
+        <h5 class="section-title mt-4">Additional Information</h5>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="employee_id" class="form-label">Employee ID</label>
+            <input type="text" 
+                   class="form-control @error('employee_id') is-invalid @enderror" 
+                   id="employee_id" 
+                   name="employee_id" 
+                   value="{{ old('employee_id', $user->employee_id) }}" 
+                   placeholder="EMP-001">
+            @error('employee_id')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="branch_id" class="form-label">Branch</label>
+            <select class="form-select @error('branch_id') is-invalid @enderror" 
+                    id="branch_id" 
+                    name="branch_id">
+              <option value="">Select Branch (Optional)</option>
+              @foreach($branches as $branch)
+                <option value="{{ $branch->id }}" {{ old('branch_id', $user->branch_id) == $branch->id ? 'selected' : '' }}>
+                  {{ $branch->name }}
+                </option>
+              @endforeach
+            </select>
+            @error('branch_id')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="department_id" class="form-label">Department</label>
+            <select class="form-select @error('department_id') is-invalid @enderror" 
+                    id="department_id" 
+                    name="department_id">
+              <option value="">Select Department (Optional)</option>
+              @foreach($departments as $department)
+                <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>
+                  {{ $department->name }}
+                </option>
+              @endforeach
+            </select>
+            @error('department_id')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="specialization" class="form-label">Specialization</label>
+            <input type="text" 
+                   class="form-control @error('specialization') is-invalid @enderror" 
+                   id="specialization" 
+                   name="specialization" 
+                   value="{{ old('specialization', $user->specialization) }}" 
+                   placeholder="e.g., General Physician, Surgeon">
+            @error('specialization')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="license_number" class="form-label">License Number</label>
+            <input type="text" 
+                   class="form-control @error('license_number') is-invalid @enderror" 
+                   id="license_number" 
+                   name="license_number" 
+                   value="{{ old('license_number', $user->license_number) }}" 
+                   placeholder="Medical License #">
+            @error('license_number')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="gender" class="form-label">Gender</label>
+            <select class="form-select @error('gender') is-invalid @enderror" 
+                    id="gender" 
+                    name="gender">
+              <option value="">Select Gender</option>
+              <option value="male" {{ old('gender', $user->gender) == 'male' ? 'selected' : '' }}>Male</option>
+              <option value="female" {{ old('gender', $user->gender) == 'female' ? 'selected' : '' }}>Female</option>
+              <option value="other" {{ old('gender', $user->gender) == 'other' ? 'selected' : '' }}>Other</option>
+            </select>
+            @error('gender')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="date_of_joining" class="form-label">Date of Joining</label>
+            <input type="date" 
+                   class="form-control @error('date_of_joining') is-invalid @enderror" 
+                   id="date_of_joining" 
+                   name="date_of_joining" 
+                   value="{{ old('date_of_joining', $user->date_of_joining?->format('Y-m-d')) }}">
+            @error('date_of_joining')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+
         <div class="mb-3">
           <label for="address" class="form-label">Address</label>
           <textarea class="form-control @error('address') is-invalid @enderror" 

@@ -145,7 +145,7 @@
   </h1>
 </div>
 
-<form action="{{ route('patients.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('patients.store') }}" method="POST" enctype="multipart/form-data" class="form-loading">
   @csrf
   
   <!-- Personal Information -->

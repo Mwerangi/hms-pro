@@ -18,11 +18,18 @@ use Illuminate\Support\Facades\DB;
 
 class ConsultationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $consultations = Consultation::with(['patient', 'doctor', 'appointment'])
-            ->latest()
-            ->paginate(20);
+        $query = Consultation::with(['patient', 'doctor', 'appointment']);
+        
+        $user = $request->user();
+
+        // If user is a doctor, show only their consultations
+        if ($user->hasRole('Doctor')) {
+            $query->where('doctor_id', $user->id);
+        }
+
+        $consultations = $query->latest()->paginate(20);
 
         return view('consultations.index', compact('consultations'));
     }
@@ -80,6 +87,13 @@ class ConsultationController extends Controller
 
     public function show(Consultation $consultation)
     {
+        $user = auth()->user();
+        
+        // If user is a doctor, ensure they can only view their own consultations
+        if ($user->hasRole('Doctor') && $consultation->doctor_id !== $user->id) {
+            abort(403, 'You are not authorized to view this consultation.');
+        }
+
         $consultation->load([
             'patient', 
             'doctor', 
@@ -206,6 +220,13 @@ class ConsultationController extends Controller
 
     public function edit(Consultation $consultation)
     {
+        $user = auth()->user();
+        
+        // If user is a doctor, ensure they can only edit their own consultations
+        if ($user->hasRole('Doctor') && $consultation->doctor_id !== $user->id) {
+            abort(403, 'You are not authorized to edit this consultation.');
+        }
+
         if (!$consultation->canBeEdited()) {
             return redirect()->back()
                 ->with('error', 'This consultation cannot be edited.');
@@ -221,6 +242,13 @@ class ConsultationController extends Controller
 
     public function update(Request $request, Consultation $consultation)
     {
+        $user = auth()->user();
+        
+        // If user is a doctor, ensure they can only update their own consultations
+        if ($user->hasRole('Doctor') && $consultation->doctor_id !== $user->id) {
+            abort(403, 'You are not authorized to update this consultation.');
+        }
+
         $validated = $request->validate([
             'temperature' => 'nullable|string|max:10',
             'blood_pressure' => 'nullable|string|max:20',

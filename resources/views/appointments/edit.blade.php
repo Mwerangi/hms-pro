@@ -201,7 +201,7 @@
     </div>
 
     <div class="form-card">
-      <form action="{{ route('appointments.update', $appointment) }}" method="POST" id="rescheduleForm">
+      <form action="{{ route('appointments.update', $appointment) }}" method="POST" id="rescheduleForm" class="form-loading">
         @csrf
         @method('PUT')
 

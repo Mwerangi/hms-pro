@@ -25,6 +25,14 @@ class User extends Authenticatable
         'phone',
         'address',
         'is_active',
+        'employee_id',
+        'department_id',
+        'branch_id',
+        'specialization',
+        'license_number',
+        'gender',
+        'date_of_joining',
+        'last_login_at',
     ];
 
     /**
@@ -48,6 +56,24 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'date_of_joining' => 'date',
+            'last_login_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the department this user belongs to
+     */
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    /**
+     * Get the branch this user belongs to
+     */
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 }

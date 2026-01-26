@@ -180,7 +180,7 @@
   </h1>
 </div>
 
-<form action="{{ route('appointments.store') }}" method="POST">
+<form action="{{ route('appointments.store') }}" method="POST" class="form-loading">
   @csrf
   
   <!-- Patient & Doctor Selection -->

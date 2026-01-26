@@ -14,7 +14,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::with('roles');
+        $query = User::with(['roles', 'branch', 'department']);
 
         // Search filter
         if ($request->filled('search')) {
@@ -56,7 +56,9 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        return view('users.create', compact('roles'));
+        $branches = \App\Models\Branch::active()->orderBy('name')->get();
+        $departments = \App\Models\Department::active()->orderBy('name')->get();
+        return view('users.create', compact('roles', 'branches', 'departments'));
     }
 
     /**
@@ -71,6 +73,13 @@ class UserController extends Controller
             'role' => 'required|exists:roles,name',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
+            'employee_id' => 'nullable|string|max:50|unique:users,employee_id',
+            'branch_id' => 'nullable|exists:branches,id',
+            'department_id' => 'nullable|exists:departments,id',
+            'specialization' => 'nullable|string|max:100',
+            'license_number' => 'nullable|string|max:100',
+            'gender' => 'nullable|in:male,female,other',
+            'date_of_joining' => 'nullable|date',
             'is_active' => 'boolean',
         ]);
 
@@ -80,6 +89,13 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
             'address' => $validated['address'] ?? null,
+            'employee_id' => $validated['employee_id'] ?? null,
+            'branch_id' => $validated['branch_id'] ?? null,
+            'department_id' => $validated['department_id'] ?? null,
+            'specialization' => $validated['specialization'] ?? null,
+            'license_number' => $validated['license_number'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'date_of_joining' => $validated['date_of_joining'] ?? null,
             'is_active' => $request->has('is_active'),
         ]);
 
@@ -94,8 +110,17 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user->load('roles');
-        return view('users.show', compact('user'));
+        $user->load(['roles', 'permissions', 'branch', 'department']);
+        
+        // Get all permissions from user's role(s)
+        $rolePermissions = $user->getAllPermissions()->groupBy(function($permission) {
+            if (strpos($permission->name, '.') !== false) {
+                return explode('.', $permission->name)[0];
+            }
+            return 'other';
+        });
+        
+        return view('users.show', compact('user', 'rolePermissions'));
     }
 
     /**
@@ -104,8 +129,10 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
+        $branches = \App\Models\Branch::active()->orderBy('name')->get();
+        $departments = \App\Models\Department::active()->orderBy('name')->get();
         $user->load('roles');
-        return view('users.edit', compact('user', 'roles'));
+        return view('users.edit', compact('user', 'roles', 'branches', 'departments'));
     }
 
     /**
@@ -120,6 +147,13 @@ class UserController extends Controller
             'role' => 'required|exists:roles,name',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
+            'employee_id' => 'nullable|string|max:50|unique:users,employee_id,' . $user->id,
+            'branch_id' => 'nullable|exists:branches,id',
+            'department_id' => 'nullable|exists:departments,id',
+            'specialization' => 'nullable|string|max:100',
+            'license_number' => 'nullable|string|max:100',
+            'gender' => 'nullable|in:male,female,other',
+            'date_of_joining' => 'nullable|date',
             'is_active' => 'boolean',
         ]);
 
@@ -128,6 +162,13 @@ class UserController extends Controller
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
             'address' => $validated['address'] ?? null,
+            'employee_id' => $validated['employee_id'] ?? null,
+            'branch_id' => $validated['branch_id'] ?? null,
+            'department_id' => $validated['department_id'] ?? null,
+            'specialization' => $validated['specialization'] ?? null,
+            'license_number' => $validated['license_number'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'date_of_joining' => $validated['date_of_joining'] ?? null,
             'is_active' => $request->has('is_active'),
         ];
 

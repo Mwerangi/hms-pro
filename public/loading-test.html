@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Test Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/nprogress@0.2.0/nprogress.css">
+    <style>
+        body {
+            padding: 50px;
+            background: #f8f9fa;
+        }
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        #nprogress .bar {
+            background: #667eea !important;
+            height: 3px !important;
+        }
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.65;
+        }
+        .btn-loading .btn-text {
+            visibility: hidden;
+            opacity: 0;
+        }
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spinner-border 0.75s linear infinite;
+        }
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">🔧 Loading System Test</h1>
+        
+        <div class="test-card">
+            <h3>System Status</h3>
+            <div id="nprogressStatus" class="status">Checking NProgress...</div>
+            <div id="functionsStatus" class="status">Checking Functions...</div>
+        </div>
+
+        <div class="test-card">
+            <h3>Test 1: Progress Bar</h3>
+            <p>Click the button to test the top progress bar</p>
+            <button class="btn btn-primary" onclick="testProgressBar()">
+                Test Progress Bar
+            </button>
+        </div>
+
+        <div class="test-card">
+            <h3>Test 2: Button Loading</h3>
+            <p>Click the button to see loading spinner</p>
+            <button class="btn btn-success" id="testBtn" onclick="testButtonLoading()">
+                <span class="btn-text">Test Button Loading</span>
+            </button>
+        </div>
+
+        <div class="test-card">
+            <h3>Test 3: Form Auto-Loading</h3>
+            <p>This form has class="form-loading" - submit button should show spinner automatically</p>
+            <form class="form-loading" onsubmit="return testFormSubmit(event)">
+                <div class="mb-3">
+                    <input type="text" class="form-control" placeholder="Test input" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Form</button>
+            </form>
+        </div>
+
+        <div class="test-card">
+            <h3>Test 4: Link Navigation</h3>
+            <p>Click this link to see progress bar</p>
+            <a href="#test" class="btn btn-info">Test Link (will show progress bar)</a>
+        </div>
+
+        <div class="test-card">
+            <h3>Console Output</h3>
+            <div id="console" style="background: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 6px; font-family: monospace; min-height: 100px; max-height: 300px; overflow-y: auto;">
+                <div>Loading system test initialized...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/nprogress@0.2.0/nprogress.js"></script>
+    <script>
+        // Console logging
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const color = type === 'error' ? '#ff4444' : type === 'success' ? '#44ff44' : '#00ff00';
+            console.innerHTML += `<div style="color: ${color}">[${new Date().toLocaleTimeString()}] ${message}</div>`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        // Check if NProgress is loaded
+        if (typeof NProgress !== 'undefined') {
+            document.getElementById('nprogressStatus').className = 'status success';
+            document.getElementById('nprogressStatus').textContent = '✓ NProgress loaded successfully';
+            log('✓ NProgress library loaded', 'success');
+            
+            NProgress.configure({ 
+                showSpinner: false,
+                trickleSpeed: 200,
+                minimum: 0.08,
+                easing: 'ease',
+                speed: 500
+            });
+            log('✓ NProgress configured', 'success');
+        } else {
+            document.getElementById('nprogressStatus').className = 'status error';
+            document.getElementById('nprogressStatus').textContent = '✗ NProgress NOT loaded';
+            log('✗ NProgress library NOT loaded', 'error');
+        }
+
+        // Define functions
+        function showButtonLoading(button) {
+            if (typeof button === 'string') {
+                button = document.querySelector(button);
+            }
+            
+            if (button && !button.classList.contains('btn-loading')) {
+                if (!button.querySelector('.btn-text')) {
+                    const text = button.innerHTML;
+                    button.innerHTML = `<span class="btn-text">${text}</span>`;
+                }
+                button.classList.add('btn-loading');
+                button.disabled = true;
+                log(`✓ Loading shown on button: ${button.id || 'unnamed'}`, 'success');
+            }
+        }
+
+        function hideButtonLoading(button) {
+            if (typeof button === 'string') {
+                button = document.querySelector(button);
+            }
+            
+            if (button) {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+                log(`✓ Loading hidden from button: ${button.id || 'unnamed'}`, 'success');
+            }
+        }
+
+        function handleFormSubmit(form, submitButton) {
+            if (!submitButton) {
+                submitButton = form.querySelector('button[type="submit"]');
+            }
+            
+            if (submitButton && !submitButton.classList.contains('btn-loading')) {
+                if (!submitButton.querySelector('.btn-text')) {
+                    const text = submitButton.innerHTML;
+                    submitButton.innerHTML = `<span class="btn-text">${text}</span>`;
+                }
+                
+                submitButton.classList.add('btn-loading');
+                submitButton.disabled = true;
+                NProgress.start();
+                log('✓ Form submit handler triggered', 'success');
+            }
+        }
+
+        // Check if functions are available
+        if (typeof showButtonLoading === 'function' && typeof hideButtonLoading === 'function') {
+            document.getElementById('functionsStatus').className = 'status success';
+            document.getElementById('functionsStatus').textContent = '✓ All loading functions available';
+            log('✓ Loading functions defined', 'success');
+        } else {
+            document.getElementById('functionsStatus').className = 'status error';
+            document.getElementById('functionsStatus').textContent = '✗ Loading functions NOT available';
+            log('✗ Loading functions NOT defined', 'error');
+        }
+
+        // Auto-attach to all forms with class 'form-loading'
+        document.addEventListener('DOMContentLoaded', function() {
+            log('✓ DOMContentLoaded event fired', 'success');
+            
+            const forms = document.querySelectorAll('form.form-loading');
+            log(`Found ${forms.length} form(s) with class "form-loading"`, 'info');
+            
+            forms.forEach((form, index) => {
+                form.addEventListener('submit', function(e) {
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    log(`Form ${index + 1} submit event triggered`, 'info');
+                    handleFormSubmit(this, submitButton);
+                });
+                log(`✓ Event listener attached to form ${index + 1}`, 'success');
+            });
+        });
+
+        // Test functions
+        function testProgressBar() {
+            log('Starting progress bar test...', 'info');
+            NProgress.start();
+            setTimeout(() => {
+                NProgress.set(0.4);
+            }, 300);
+            setTimeout(() => {
+                NProgress.set(0.7);
+            }, 700);
+            setTimeout(() => {
+                NProgress.done();
+                log('✓ Progress bar test completed', 'success');
+            }, 1200);
+        }
+
+        function testButtonLoading() {
+            const btn = document.getElementById('testBtn');
+            log('Starting button loading test...', 'info');
+            showButtonLoading(btn);
+            
+            setTimeout(() => {
+                hideButtonLoading(btn);
+                log('✓ Button loading test completed', 'success');
+            }, 2000);
+        }
+
+        function testFormSubmit(event) {
+            event.preventDefault();
+            log('Form submitted (prevented default)', 'info');
+            
+            setTimeout(() => {
+                const btn = event.target.querySelector('button[type="submit"]');
+                hideButtonLoading(btn);
+                NProgress.done();
+                log('✓ Form loading test completed', 'success');
+                alert('Form test completed! Check console for details.');
+            }, 2000);
+            
+            return false;
+        }
+
+        // Test link clicks
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (link && link.href && !link.getAttribute('href').startsWith('http')) {
+                if (!link.getAttribute('href').startsWith('#test')) {
+                    e.preventDefault();
+                }
+                log('Link clicked, showing progress bar', 'info');
+                NProgress.start();
+                setTimeout(() => {
+                    NProgress.done();
+                    log('✓ Link progress bar completed', 'success');
+                }, 1000);
+            }
+        });
+
+        log('All tests ready. Click buttons to test!', 'success');
+    </script>
+</body>
+</html>
