@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ward;
 use App\Models\Bed;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class WardController extends Controller
@@ -54,9 +55,15 @@ class WardController extends Controller
 
     public function show(Ward $ward)
     {
-        $ward->load(['beds' => function($query) {
-            $query->orderBy('bed_number');
-        }, 'nurse']);
+        $ward->load([
+            'beds' => function($query) {
+                $query->orderBy('bed_number');
+            }, 
+            'beds.currentAdmission' => function($query) {
+                $query->with(['patient', 'doctor', 'admittedBy', 'dischargedBy']);
+            },
+            'nurse'
+        ]);
 
         $stats = [
             'total_beds' => $ward->beds()->where('is_active', true)->count(),
@@ -71,7 +78,11 @@ class WardController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('wards.show', compact('ward', 'stats', 'nurses'));
+        // Get ward charge from settings based on ward type
+        $wardChargeKey = $this->getWardChargeSettingKey($ward->ward_type);
+        $wardCharge = Setting::where('key', $wardChargeKey)->value('value') ?? $ward->base_charge_per_day;
+
+        return view('wards.show', compact('ward', 'stats', 'nurses', 'wardCharge'));
     }
 
     public function edit(Ward $ward)
@@ -81,7 +92,11 @@ class WardController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('wards.edit', compact('ward', 'nurses'));
+        // Get ward charge from settings based on ward type
+        $wardChargeKey = $this->getWardChargeSettingKey($ward->ward_type);
+        $wardCharge = Setting::where('key', $wardChargeKey)->value('value') ?? $ward->base_charge_per_day;
+
+        return view('wards.show', compact('ward', 'stats', 'nurses', 'wardCharge'));
     }
 
     public function update(Request $request, Ward $ward)
@@ -162,5 +177,25 @@ class WardController extends Controller
             ],
             'beds' => $beds
         ]);
+    }
+
+    /**
+     * Map ward type to settings key
+     */
+    private function getWardChargeSettingKey($wardType)
+    {
+        $mapping = [
+            'general' => 'ipd_general_ward_charge',
+            'semi-private' => 'ipd_private_ward_charge',
+            'private' => 'ipd_private_ward_charge',
+            'icu' => 'ipd_icu_charge',
+            'nicu' => 'ipd_nicu_charge',
+            'picu' => 'ipd_pediatric_charge',
+            'emergency' => 'ipd_general_ward_charge',
+            'maternity' => 'ipd_maternity_charge',
+            'pediatric' => 'ipd_pediatric_charge',
+        ];
+
+        return $mapping[$wardType] ?? 'ipd_general_ward_charge';
     }
 }

@@ -33,20 +33,22 @@
   <style>
     /* Custom HMS Styles */
     :root {
-      --hms-primary: #00a19e;
-      --hms-primary-dark: #008582;
-      --hms-secondary: #193838;
-      --hms-purple: #667eea;
-      --hms-purple-dark: #764ba2;
-      --hms-success: #48bb78;
-      --hms-warning: #ffc107;
-      --hms-danger: #dc3545;
-      --hms-info: #17a2b8;
+      --hms-primary: #111827;
+      --hms-primary-dark: #000000;
+      --hms-secondary: #374151;
+      --hms-accent: #6b7280;
+      --hms-success: #065f46;
+      --hms-warning: #92400e;
+      --hms-danger: #991b1b;
+      --hms-info: #1e40af;
       --bg-primary: #ffffff;
-      --bg-secondary: #f7f8fc;
-      --text-primary: #2d3748;
-      --text-secondary: #718096;
-      --border-color: #e2e8f0;
+      --bg-secondary: #f9fafb;
+      --bg-tertiary: #f3f4f6;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --text-tertiary: #9ca3af;
+      --border-color: #e5e7eb;
+      --border-color-light: #f3f4f6;
     }
 
     /* Dark Mode Variables */
@@ -67,7 +69,7 @@
 
     /* Breadcrumb */
     .breadcrumb-section {
-      padding: 16px 20px 0;
+      padding: 16px 24px 0;
       margin-top: 60px;
       margin-left: 260px;
       transition: margin-left 0.3s ease;
@@ -75,7 +77,7 @@
     }
 
     .sidebar-collapsed .breadcrumb-section {
-      margin-left: 80px;
+      margin-left: 70px;
     }
 
     .breadcrumb {
@@ -84,8 +86,8 @@
       background: white;
       font-size: 13px;
       border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border-color);
     }
 
     .breadcrumb-item {
@@ -94,7 +96,7 @@
     }
 
     .breadcrumb-item a {
-      color: #6b7280;
+      color: var(--text-secondary);
       text-decoration: none;
       transition: all 0.2s ease;
       display: flex;
@@ -103,7 +105,7 @@
     }
 
     .breadcrumb-item a:hover {
-      color: #667eea;
+      color: var(--text-primary);
     }
 
     .breadcrumb-item a i {
@@ -111,13 +113,13 @@
     }
 
     .breadcrumb-item.active {
-      color: #111827;
-      font-weight: 500;
+      color: var(--text-primary);
+      font-weight: 600;
     }
 
     .breadcrumb-item + .breadcrumb-item::before {
       content: '/';
-      color: #d1d5db;
+      color: var(--border-color);
       padding: 0 8px;
       font-weight: 400;
     }
@@ -138,26 +140,26 @@
     }
 
     .dark-mode-toggle:hover {
-      background: rgba(102, 126, 234, 0.1);
-      color: var(--hms-purple);
-      transform: rotate(15deg);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      transform: none;
     }
 
     /* ===== Loading Styles ===== */
     /* NProgress Customization */
     #nprogress .bar {
-      background: var(--hms-purple) !important;
+      background: var(--hms-primary) !important;
       height: 3px !important;
       z-index: 10000 !important;
     }
 
     #nprogress .peg {
-      box-shadow: 0 0 10px var(--hms-purple), 0 0 5px var(--hms-purple) !important;
+      box-shadow: 0 0 10px var(--hms-primary), 0 0 5px var(--hms-primary) !important;
     }
 
     #nprogress .spinner-icon {
-      border-top-color: var(--hms-purple) !important;
-      border-left-color: var(--hms-purple) !important;
+      border-top-color: var(--hms-primary) !important;
+      border-left-color: var(--hms-primary) !important;
     }
 
     /* Button Loading States */
@@ -220,15 +222,15 @@
     .loader-spinner {
       width: 50px;
       height: 50px;
-      border: 4px solid #e5e7eb;
-      border-top-color: var(--hms-purple);
+      border: 4px solid var(--border-color);
+      border-top-color: var(--hms-primary);
       border-radius: 50%;
       animation: spinner-border 1s linear infinite;
     }
 
     [data-theme="dark"] .loader-spinner {
       border-color: #4a5568;
-      border-top-color: var(--hms-purple);
+      border-top-color: var(--hms-primary);
     }
 
     /* Top Header */
@@ -238,14 +240,13 @@
       left: 0;
       right: 0;
       height: 60px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
+      background: white;
       border-bottom: 1px solid var(--border-color);
       z-index: 1000;
       display: flex;
       align-items: center;
-      padding: 0 20px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      padding: 0 24px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
       transition: all 0.3s ease;
     }
 
@@ -256,36 +257,37 @@
     .sidebar-toggle {
       width: 40px;
       height: 40px;
-      border-radius: 10px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       background: transparent;
       border: none;
-      color: #4a5568;
-      margin-right: 15px;
+      color: var(--text-secondary);
+      margin-right: 20px;
     }
 
     .sidebar-toggle:hover {
-      background: rgba(102, 126, 234, 0.1);
-      color: var(--hms-purple);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
     }
 
     .hms-logo {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 700;
-      color: var(--hms-secondary);
+      color: var(--text-primary);
       text-decoration: none;
       margin-right: 30px;
+      letter-spacing: -0.5px;
     }
 
     .hms-logo i {
-      font-size: 28px;
+      font-size: 24px;
       color: var(--hms-primary);
     }
 
@@ -300,20 +302,20 @@
       position: relative;
       width: 40px;
       height: 40px;
-      border-radius: 10px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #4a5568;
+      color: var(--text-secondary);
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       background: transparent;
       border: none;
     }
 
     .header-icon:hover {
-      background: rgba(102, 126, 234, 0.1);
-      color: var(--hms-purple);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
     }
 
     .header-icon .badge {
@@ -333,21 +335,23 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 8px 12px;
-      border-radius: 10px;
+      padding: 6px 12px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
     }
 
     .user-profile:hover {
-      background: rgba(102, 126, 234, 0.1);
+      background: var(--bg-tertiary);
+      border-color: var(--border-color);
     }
 
     .user-avatar {
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--hms-purple), var(--hms-primary));
+      background: var(--hms-primary);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -379,10 +383,11 @@
       top: 60px;
       left: 0;
       bottom: 0;
-      width: 240px;
-      background: var(--bg-primary);
+      width: 260px;
+      background: white;
       border-right: 1px solid var(--border-color);
       overflow-y: auto;
+      overflow-x: hidden;
       transition: all 0.3s ease;
       z-index: 999;
     }
@@ -396,16 +401,16 @@
     }
 
     .sidebar-nav {
-      padding: 20px 0;
+      padding: 16px 0;
     }
 
     .nav-section-title {
-      padding: 10px 20px;
+      padding: 12px 20px 8px;
       font-size: 11px;
       font-weight: 600;
-      color: #a0aec0;
+      color: var(--text-tertiary);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       transition: all 0.3s ease;
     }
 
@@ -414,50 +419,71 @@
       height: 0;
       padding: 0;
       margin: 0;
+      overflow: hidden;
     }
 
     .nav-item {
-      margin: 2px 10px;
+      margin: 0px 12px 4px;
     }
 
     .nav-link {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 15px;
+      padding: 11px 14px;
       color: var(--text-secondary);
       text-decoration: none;
-      border-radius: 10px;
-      transition: all 0.3s ease;
+      border-radius: 8px;
+      transition: all 0.2s ease;
       font-size: 14px;
+      font-weight: 500;
       position: relative;
     }
 
     .nav-link i {
-      font-size: 20px;
-      min-width: 20px;
+      font-size: 19px;
+      min-width: 19px;
+      color: var(--text-secondary);
+      transition: color 0.2s ease;
     }
 
     .nav-link:hover {
-      background: rgba(102, 126, 234, 0.1);
-      color: var(--hms-purple);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-link:hover i {
+      color: var(--text-primary);
     }
 
     .nav-link.active {
-      background: linear-gradient(135deg, var(--hms-primary), var(--hms-purple));
+      background: var(--hms-primary);
       color: white;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link.active i {
+      color: white;
+    }
+
+    .hms-sidebar.collapsed .nav-link {
+      justify-content: center;
+      padding: 11px;
     }
 
     .hms-sidebar.collapsed .nav-link span {
       display: none;
     }
 
+    .hms-sidebar.collapsed .nav-link {
+      gap: 0;
+    }
+
     /* Main Content */
     .hms-main {
-      margin-left: 240px;
+      margin-left: 260px;
       margin-top: 60px;
-      padding: 10px 20px 0;
+      padding: 10px 24px 0;
       transition: all 0.3s ease;
       min-height: calc(100vh - 60px);
     }
@@ -470,8 +496,8 @@
     .hms-footer {
       margin-top: 60px;
       padding: 24px 0;
-      border-top: 1px solid #e5e7eb;
-      background: #f9fafb;
+      border-top: 1px solid var(--border-color);
+      background: white;
     }
 
     .footer-content {
@@ -494,18 +520,18 @@
     }
 
     .footer-text {
-      color: #9ca3af;
+      color: var(--text-secondary);
     }
 
     .footer-link {
-      color: #9ca3af;
+      color: var(--text-secondary);
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s;
     }
 
     .footer-link:hover {
-      color: #667eea;
+      color: var(--text-primary);
     }
 
     /* Logout Form */
@@ -612,27 +638,19 @@
       @if(auth()->user()->canAny(['nursing.view-dashboard', 'consultations.view-all', 'consultations.view-own', 'ipd.view-dashboard', 'lab.view-dashboard', 'radiology.view-dashboard', 'pharmacy.view-dashboard']))
       <div class="nav-section-title">Clinical</div>
       <ul class="list-unstyled">
-        @can('nursing.view-dashboard')
-        <li class="nav-item">
-          <a href="{{ route('nursing.dashboard') }}" class="nav-link {{ request()->routeIs('nursing.*') ? 'active' : '' }}">
-            <i class="bi bi-heart-pulse"></i>
-            <span>Nursing Station</span>
-          </a>
-        </li>
-        @endcan
         @canany(['consultations.view-all', 'consultations.view-own'])
         <li class="nav-item">
           <a href="{{ route('consultations.index') }}" class="nav-link {{ request()->routeIs('consultations.*') ? 'active' : '' }}">
             <i class="bi bi-file-medical"></i>
-            <span>Consultations</span>
+            <span>OPD / Consultations</span>
           </a>
         </li>
         @endcanany
         @can('ipd.view-dashboard')
         <li class="nav-item">
-          <a href="{{ route('ipd.dashboard') }}" class="nav-link {{ request()->routeIs('ipd.*') || request()->routeIs('wards.*') || request()->routeIs('beds.*') || request()->routeIs('admissions.*') ? 'active' : '' }}">
+          <a href="{{ route('admissions.index') }}" class="nav-link {{ request()->routeIs('admissions.*') || request()->routeIs('ipd.*') || request()->routeIs('wards.*') || request()->routeIs('beds.*') ? 'active' : '' }}">
             <i class="bi bi-hospital"></i>
-            <span>IPD / Beds</span>
+            <span>IPD / Admissions</span>
           </a>
         </li>
         @endcan
@@ -649,14 +667,6 @@
           <a href="{{ route('radiology.dashboard') }}" class="nav-link {{ request()->routeIs('radiology.*') ? 'active' : '' }}">
             <i class="bi bi-camera"></i>
             <span>Radiology</span>
-          </a>
-        </li>
-        @endcan
-        @can('pharmacy.view-dashboard')
-        <li class="nav-item">
-          <a href="{{ route('pharmacy.dashboard') }}" class="nav-link {{ request()->routeIs('pharmacy.*') ? 'active' : '' }}">
-            <i class="bi bi-capsule"></i>
-            <span>Pharmacy</span>
           </a>
         </li>
         @endcan

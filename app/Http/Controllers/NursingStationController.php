@@ -49,6 +49,47 @@ class NursingStationController extends Controller
      */
     public function recordVitals(Request $request, Appointment $appointment)
     {
+        // Sanitize vital signs - remove units and extra characters
+        $input = $request->all();
+        
+        // Clean temperature (remove °, F, C, etc.)
+        if (!empty($input['temperature'])) {
+            $input['temperature'] = preg_replace('/[^0-9.]/', '', $input['temperature']);
+        }
+        
+        // Clean blood pressure (keep only numbers and /)
+        if (!empty($input['blood_pressure'])) {
+            $input['blood_pressure'] = preg_replace('/[^0-9\/]/', '', $input['blood_pressure']);
+        }
+        
+        // Clean pulse rate (remove bpm, etc.)
+        if (!empty($input['pulse_rate'])) {
+            $input['pulse_rate'] = preg_replace('/[^0-9]/', '', $input['pulse_rate']);
+        }
+        
+        // Clean respiratory rate
+        if (!empty($input['respiratory_rate'])) {
+            $input['respiratory_rate'] = preg_replace('/[^0-9]/', '', $input['respiratory_rate']);
+        }
+        
+        // Clean SpO2 (remove %)
+        if (!empty($input['spo2'])) {
+            $input['spo2'] = preg_replace('/[^0-9]/', '', $input['spo2']);
+        }
+        
+        // Clean weight (remove kg, lbs, etc.)
+        if (!empty($input['weight'])) {
+            $input['weight'] = preg_replace('/[^0-9.]/', '', $input['weight']);
+        }
+        
+        // Clean height (remove cm, ft, in, etc.)
+        if (!empty($input['height'])) {
+            $input['height'] = preg_replace('/[^0-9.]/', '', $input['height']);
+        }
+        
+        // Replace request data with sanitized input
+        $request->merge($input);
+        
         $validated = $request->validate([
             'blood_pressure' => 'required|string|max:20',
             'pulse_rate' => 'required|string|max:20',

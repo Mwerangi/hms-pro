@@ -123,10 +123,45 @@ class PatientController extends Controller
      */
     public function show(Patient $patient)
     {
-        // Load latest active appointment
-        $patient->load('latestAppointment');
+        // Load all medical history relationships
+        $patient->load([
+            'latestAppointment',
+            'appointments' => function($query) {
+                $query->latest()->limit(10);
+            },
+            'bills' => function($query) {
+                $query->latest()->limit(10);
+            }
+        ]);
+
+        // Get admission history
+        $admissions = \App\Models\Admission::where('patient_id', $patient->id)
+            ->with(['ward', 'bed', 'doctor'])
+            ->latest()
+            ->get();
+
+        // Get consultation history with related prescriptions
+        $consultations = \App\Models\Consultation::where('patient_id', $patient->id)
+            ->with(['doctor', 'appointment', 'prescriptions.items.medicine'])
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        // Get prescriptions not linked to consultations
+        $standalonePrescriptions = \App\Models\Prescription::where('patient_id', $patient->id)
+            ->whereNull('consultation_id')
+            ->with(['items.medicine', 'doctor'])
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        // Get lab orders
+        $labOrders = \App\Models\LabOrder::where('patient_id', $patient->id)
+            ->latest()
+            ->limit(10)
+            ->get();
         
-        return view('patients.show', compact('patient'));
+        return view('patients.show', compact('patient', 'admissions', 'consultations', 'standalonePrescriptions', 'labOrders'));
     }
 
     /**

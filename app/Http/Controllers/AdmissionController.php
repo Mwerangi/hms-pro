@@ -11,11 +11,36 @@ use Illuminate\Http\Request;
 
 class AdmissionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $admissions = Admission::with(['patient', 'ward', 'bed', 'doctor'])
-            ->orderBy('admission_date', 'desc')
-            ->paginate(20);
+        $query = Admission::with(['patient', 'ward', 'bed', 'doctor']);
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by ward
+        if ($request->filled('ward_id')) {
+            $query->where('ward_id', $request->ward_id);
+        }
+
+        // Filter by admission type
+        if ($request->filled('admission_type')) {
+            $query->where('admission_type', $request->admission_type);
+        }
+
+        // Search by patient name or ID
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('patient', function($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('patient_id', 'like', "%{$search}%");
+            });
+        }
+
+        $admissions = $query->orderBy('admission_date', 'desc')->paginate(20);
 
         return view('admissions.index', compact('admissions'));
     }
@@ -31,6 +56,28 @@ class AdmissionController extends Controller
 
     public function store(Request $request)
     {
+        // Sanitize numeric fields BEFORE validation
+        $input = $request->all();
+        
+        if (!empty($input['temperature'])) {
+            $input['temperature'] = preg_replace('/[^0-9.]/', '', $input['temperature']);
+        }
+        if (!empty($input['blood_pressure'])) {
+            $input['blood_pressure'] = preg_replace('/[^0-9\/]/', '', $input['blood_pressure']);
+        }
+        if (!empty($input['pulse_rate'])) {
+            $input['pulse_rate'] = preg_replace('/[^0-9]/', '', $input['pulse_rate']);
+        }
+        if (!empty($input['respiratory_rate'])) {
+            $input['respiratory_rate'] = preg_replace('/[^0-9]/', '', $input['respiratory_rate']);
+        }
+        if (!empty($input['oxygen_saturation'])) {
+            $input['oxygen_saturation'] = preg_replace('/[^0-9]/', '', $input['oxygen_saturation']);
+        }
+        
+        // Replace request data with sanitized input
+        $request->merge($input);
+        
         $validated = $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'ward_id' => 'required|exists:wards,id',
@@ -157,6 +204,10 @@ class AdmissionController extends Controller
 
         // Update admission
         $admission->update($validated);
+
+        // Refresh the admission to load new relationships
+        $admission->refresh();
+        $admission->load(['ward', 'bed', 'patient', 'doctor']);
 
         // Occupy new bed
         if ($admission->bed) {

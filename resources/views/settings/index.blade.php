@@ -117,6 +117,46 @@
     border-bottom: 1px solid #e5e7eb;
   }
 
+  /* Grid layout for billing settings */
+  .form-section.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 100%;
+  }
+
+  @media (min-width: 1400px) {
+    .form-section.grid-layout {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .form-section.grid-layout .form-group {
+    margin-bottom: 0;
+  }
+
+  .settings-section-header {
+    grid-column: 1 / -1;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    padding: 16px 0 8px 0;
+    margin-top: 16px;
+    border-bottom: 2px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .settings-section-header:first-child {
+    margin-top: 0;
+  }
+
+  .settings-section-header i {
+    font-size: 16px;
+    color: #6b7280;
+  }
+
   .form-section:last-child {
     border-bottom: none;
     margin-bottom: 0;
@@ -439,8 +479,36 @@
       @csrf
       @method('PUT')
 
-      <div class="form-section">
+      <div class="form-section {{ $activeCategory === 'billing' ? 'grid-layout' : '' }}">
+        @php
+          $lastSection = null;
+          $settingSections = [
+            'invoice_prefix' => ['title' => 'General Billing Settings', 'icon' => 'bi-receipt'],
+            'ipd_general_ward_charge' => ['title' => 'IPD Ward Charges', 'icon' => 'bi-hospital'],
+            'ipd_vip_bed_charge' => ['title' => 'IPD Additional Services', 'icon' => 'bi-plus-circle'],
+          ];
+        @endphp
+        
         @foreach($settings as $setting)
+          @php
+            // Check if this setting starts a new section
+            $currentSection = null;
+            foreach($settingSections as $sectionKey => $sectionData) {
+              if($setting->key === $sectionKey) {
+                $currentSection = $sectionData;
+                break;
+              }
+            }
+          @endphp
+          
+          @if($currentSection && $currentSection !== $lastSection)
+            <div class="settings-section-header">
+              <i class="bi {{ $currentSection['icon'] }}"></i>
+              {{ $currentSection['title'] }}
+            </div>
+            @php $lastSection = $currentSection; @endphp
+          @endif
+          
           @if($setting->type === 'boolean')
             <div class="form-group">
               <label class="form-switch">

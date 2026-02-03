@@ -21,8 +21,8 @@ class DefaultSettingsSeeder extends Seeder
             ['key' => 'hospital_email', 'value' => '', 'category' => 'general', 'type' => 'email', 'description' => 'Official email address', 'sort_order' => 4],
             ['key' => 'timezone', 'value' => 'UTC', 'category' => 'general', 'type' => 'select', 'description' => 'System timezone', 'sort_order' => 5],
             ['key' => 'date_format', 'value' => 'Y-m-d', 'category' => 'general', 'type' => 'select', 'description' => 'Date display format', 'sort_order' => 6],
-            ['key' => 'currency', 'value' => 'USD', 'category' => 'general', 'type' => 'select', 'description' => 'Default currency', 'sort_order' => 7],
-            ['key' => 'currency_symbol', 'value' => '$', 'category' => 'general', 'type' => 'string', 'description' => 'Currency symbol', 'sort_order' => 8],
+            ['key' => 'currency', 'value' => 'TSH', 'category' => 'general', 'type' => 'select', 'description' => 'Default currency', 'sort_order' => 7],
+            ['key' => 'currency_symbol', 'value' => 'TSh', 'category' => 'general', 'type' => 'string', 'description' => 'Currency symbol', 'sort_order' => 8],
             
             // Patient Management
             ['key' => 'patient_id_prefix', 'value' => 'PAT-', 'category' => 'patient', 'type' => 'string', 'description' => 'Patient ID prefix', 'sort_order' => 1],
@@ -44,6 +44,17 @@ class DefaultSettingsSeeder extends Seeder
             ['key' => 'tax_rate', 'value' => '0', 'category' => 'billing', 'type' => 'decimal', 'description' => 'Default tax rate (%)', 'sort_order' => 4],
             ['key' => 'allow_partial_payment', 'value' => '1', 'category' => 'billing', 'type' => 'boolean', 'description' => 'Accept partial payments', 'sort_order' => 5],
             ['key' => 'discount_allowed', 'value' => '1', 'category' => 'billing', 'type' => 'boolean', 'description' => 'Allow discounts', 'sort_order' => 6],
+            
+            // IPD Charges
+            ['key' => 'ipd_general_ward_charge', 'value' => '15000', 'category' => 'billing', 'type' => 'decimal', 'description' => 'General Ward base charge per day (TSh)', 'sort_order' => 7],
+            ['key' => 'ipd_private_ward_charge', 'value' => '50000', 'category' => 'billing', 'type' => 'decimal', 'description' => 'Private Ward base charge per day (TSh)', 'sort_order' => 8],
+            ['key' => 'ipd_icu_charge', 'value' => '100000', 'category' => 'billing', 'type' => 'decimal', 'description' => 'ICU base charge per day (TSh)', 'sort_order' => 9],
+            ['key' => 'ipd_nicu_charge', 'value' => '120000', 'category' => 'billing', 'type' => 'decimal', 'description' => 'NICU base charge per day (TSh)', 'sort_order' => 10],
+            ['key' => 'ipd_maternity_charge', 'value' => '30000', 'category' => 'billing', 'type' => 'decimal', 'description' => 'Maternity Ward base charge per day (TSh)', 'sort_order' => 11],
+            ['key' => 'ipd_pediatric_charge', 'value' => '25000', 'category' => 'billing', 'type' => 'decimal', 'description' => 'Pediatric Ward base charge per day (TSh)', 'sort_order' => 12],
+            ['key' => 'ipd_vip_bed_charge', 'value' => '25000', 'category' => 'billing', 'type' => 'decimal', 'description' => 'VIP Bed additional charge per day (TSh)', 'sort_order' => 13],
+            ['key' => 'ipd_oxygen_charge', 'value' => '10000', 'category' => 'billing', 'type' => 'decimal', 'description' => 'Oxygen Support charge per day (TSh)', 'sort_order' => 14],
+            ['key' => 'ipd_monitoring_charge', 'value' => '5000', 'category' => 'billing', 'type' => 'decimal', 'description' => 'Patient Monitoring charge per day (TSh)', 'sort_order' => 15],
             
             // Pharmacy Settings
             ['key' => 'stock_alert_threshold', 'value' => '10', 'category' => 'pharmacy', 'type' => 'integer', 'description' => 'Min stock alert quantity', 'sort_order' => 1],
