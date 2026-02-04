@@ -457,7 +457,7 @@
     }
 
     .nav-link.active {
-      background: var(--hms-primary);
+      background: #111827;
       color: white;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
